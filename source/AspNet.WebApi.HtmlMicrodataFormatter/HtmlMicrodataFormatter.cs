@@ -4,12 +4,6 @@ using System.Xml.Linq;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
-    public interface IHtmlMicrodataSerializer
-    {
-        IEnumerable<Type> SupportedTypes { get; }
-        IEnumerable<XObject> Serialize(string propertyName, object obj, IHtmlMicrodataSerializer rootSerializer);
-    }
-
     public class HtmlMicrodataFormatter : HyperMediaHtmlMediaTypeFormatter, IHtmlMicrodataSerializer
     {
         private readonly SerializerRegistry serializerRegistry = new SerializerRegistry();
@@ -18,6 +12,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
             serializerRegistry.Register(new UriSerializer());
             serializerRegistry.Register(new ToStringSerializer(typeof(Version)));
+            serializerRegistry.Register(new ApiGroupSerializer());
+            serializerRegistry.Register(new ApiDescriptionSerializer());
         }
 
         public void RegisterSerializer(IHtmlMicrodataSerializer serializer)
