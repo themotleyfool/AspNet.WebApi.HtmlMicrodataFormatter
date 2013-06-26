@@ -60,11 +60,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultSerializer.cs" />
     <Compile Include="DocumentationController.cs" />
+    <Compile Include="EntitySerializer.cs" />
     <Compile Include="HtmlDocumentation.cs" />
     <Compile Include="HtmlMicrodataFormatter.cs" />
     <Compile Include="HyperMediaHtmlMediaTypeFormatter.cs" />
     <Compile Include="SerializerRegistry.cs" />
+    <Compile Include="ToStringSerializer.cs" />
+    <Compile Include="UriSerializer.cs" />
     <Compile Include="WebApiHtmlDocumentationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlCommentHtmlTransformer.cs" />

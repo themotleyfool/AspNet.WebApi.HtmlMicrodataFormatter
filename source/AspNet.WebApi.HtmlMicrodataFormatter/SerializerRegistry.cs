@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
@@ -30,12 +31,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public IHtmlMicrodataSerializer GetSerializer(Type t)
         {
-            IHtmlMicrodataSerializer serializer;
-            if (!serializers.TryGetValue(t, out serializer))
-            {
-                serializer = DefaultSerializer;
-            }
-            return serializer;
+            return serializers.FirstOrDefault(kv => kv.Key.IsAssignableFrom(t)).Value ?? DefaultSerializer;
         }
     }
 }

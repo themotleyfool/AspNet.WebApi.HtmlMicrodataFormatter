@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
@@ -10,13 +11,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
     public class HtmlMicrodataFormatterTests
     {
         private HtmlMicrodataFormatter formatter;
-        private DefaultSerializer serializer;
 
         [SetUp]
         public void SetUp()
         {
             formatter = new HtmlMicrodataFormatter();
-            serializer = new DefaultSerializer();
         }
         
         public class SerializeTests : HtmlMicrodataFormatterTests
@@ -38,14 +37,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
                     return "http://example.com/schema/MyCustomThing";
                 }
 
-                protected internal override IEnumerable<object> BuildPropertyValue(string propertyName, object propertyValue, IHtmlMicrodataSerializer rootSerializer)
+                protected internal override IEnumerable<XObject> BuildPropertyValue(object obj, string propertyName, object propertyValue, IHtmlMicrodataSerializer rootSerializer)
                 {
                     if (propertyName == "Image")
                     {
                         return new[] {new XElement("img", new XAttribute("itemprop", propertyName))};
                     }
 
-                    return base.BuildPropertyValue(propertyName, propertyValue, rootSerializer);
+                    return base.BuildPropertyValue(obj, propertyName, propertyValue, rootSerializer);
                 }
             }
 
@@ -78,40 +77,6 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             }
         }
 
-        public class ReflectPropertyTests : HtmlMicrodataFormatterTests
-        {
-            public class Sample
-            {
-                public string MyProp { get; set; }
-            }
-
-            [Test]
-            public void ReflectPublicProperties()
-            {
-                var result = serializer.Reflect(new Sample { MyProp = "hello" })
-                                      .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-                Assert.That(result, Is.EquivalentTo(new Dictionary<string, object> { { "MyProp", "hello" } }));
-            }
-        }
-
-        public class ReflectFieldTests : HtmlMicrodataFormatterTests
-        {
-            public class Sample
-            {
-                public string MyField;
-            }
-
-            [Test]
-            public void ReflectPublicFields()
-            {
-                var result = serializer.Reflect(new Sample { MyField = "world" })
-                                      .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-                Assert.That(result, Is.EquivalentTo(new Dictionary<string, object> { { "MyField", "world" } }));
-            }
-        }
-
         public class BuildPropertyValueTests : HtmlMicrodataFormatterTests
         {
             [Test]
@@ -135,7 +100,6 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             [Test]
             public void Uri()
             {
-                
                 AssertResultEquals(formatter.BuildBody(new Uri("http://example.com/some%20path")), "<a href=\"http://example.com/some%20path\">http://example.com/some path</a>");
             }
 
@@ -148,14 +112,44 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             [Test]
             public void ArrayOfString()
             {
-                AssertResultEquals(formatter.BuildBody(new[] { "s1", "s2" }).ToArray(), "<span>s1</span>", "<span>s2</span>");
+                AssertResultEquals(formatter.BuildBody(new[] { "s1", "s2" }), "<span>s1</span>", "<span>s2</span>");
+            }
+
+            [Test]
+            public void Expando()
+            {
+                dynamic expando = new ExpandoObject();
+
+                expando.Name = "Fred";
+
+                var expected = new XElement("dl",
+                    new XAttribute("itemtype", "http://schema.org/Thing"),
+                    new XAttribute("itemscope", "itemscope"),
+                    new XElement("dt", new XText("Name")),
+                    new XElement("dd",
+                        new XElement("span",
+                            new XAttribute("itemprop", "Name"),
+                            new XText("Fred"))));
+
+                AssertResultEquals(formatter.BuildBody(expando), expected.ToString());
+            }
+            
+            [Test]
+            public void OneDdPerItem()
+            {
+                dynamic expando = new ExpandoObject();
+
+                expando.Names = new[] {"Fred", "Ted"};
+
+                var result = (XElement) Enumerable.Single(formatter.BuildBody(expando));
+
+                Assert.That(result.Descendants().Count(e => e.Name == "dd"), Is.EqualTo(2));
             }
 
             private static void AssertResultEquals(IEnumerable<XObject> result, params object[] expectedValues)
             {
                 Assert.That(result.Select(x => x.ToString()), Is.EqualTo(expectedValues));
             }
-
         }
     }
 }

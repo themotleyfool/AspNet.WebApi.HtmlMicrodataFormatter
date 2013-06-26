@@ -63,7 +63,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultSerializerTests.cs" />
+    <Compile Include="EntitySerializerTests.cs" />
     <Compile Include="HtmlMicrodataFormatterTests.cs" />
+    <Compile Include="ToStringSerializerTests.cs" />
+    <Compile Include="UriSerializerTests.cs" />
     <Compile Include="XmlCommentHtmlTransformerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
