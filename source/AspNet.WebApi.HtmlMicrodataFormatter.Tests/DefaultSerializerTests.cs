@@ -14,7 +14,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         {
             serializer = new DefaultSerializer();
         }
-        
+
         public class ReflectPropertyTests : DefaultSerializerTests
         {
             public class Sample

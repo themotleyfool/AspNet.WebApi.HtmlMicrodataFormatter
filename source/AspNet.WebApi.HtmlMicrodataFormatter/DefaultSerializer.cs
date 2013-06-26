@@ -42,10 +42,17 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 yield break;
             }
 
-            yield return new XElement("dl",
+            var dataList = new XElement("dl",
                                       new XAttribute("itemtype", GetItemType(obj.GetType())),
                                       new XAttribute("itemscope", "itemscope"),
                                       BuildProperties(obj, rootSerializer));
+
+            if (!string.IsNullOrEmpty(propertyName))
+            {
+                dataList.SetAttributeValue("itemprop", propertyName);
+            }
+
+            yield return dataList;
         }
 
         protected virtual string GetItemType(Type type)

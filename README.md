@@ -5,6 +5,7 @@
 - [ ] Nested entity: can itemprop be on same element as new itemscope+itemtype?
 - [ ] Test/support DateTime, TimeSpan, etc
 - [ ] Omit dt/dd for empty properties
+- [ ] Allow client to control template (html head, etc)
 
 Discoverable Api
 - [ ] Add more custom input types (select, file, etc)

@@ -135,7 +135,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             }
             
             [Test]
-            public void OneDdPerItem()
+            public void OneDataDefinitionPerItem()
             {
                 dynamic expando = new ExpandoObject();
 
@@ -144,6 +144,19 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
                 var result = (XElement) Enumerable.Single(formatter.BuildBody(expando));
 
                 Assert.That(result.Descendants().Count(e => e.Name == "dd"), Is.EqualTo(2));
+            }
+
+            [Test]
+            public void SetItemPropOnDataList()
+            {
+                dynamic expando = new ExpandoObject();
+
+                expando.Names = new[] { "Fred", "Ted" };
+
+                var result = (XElement)Enumerable.Single(formatter.Serialize("PropName", expando, formatter));
+
+                Assert.That(result.Attribute("itemprop"), Is.Not.Null, "Should set itemprop attribute on <dl>");
+                Assert.That(result.Attribute("itemprop").Value, Is.EqualTo("PropName"));
             }
 
             private static void AssertResultEquals(IEnumerable<XObject> result, params object[] expectedValues)

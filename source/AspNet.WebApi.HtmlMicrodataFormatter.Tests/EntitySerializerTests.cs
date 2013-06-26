@@ -56,6 +56,24 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             Assert.That(elem.ToString(), Is.EqualTo(expected.ToString()));
         }
 
+        [Test]
+        public void CustomPropertyHandlerAlternateSignature()
+        {
+            serializer.Property(e => e.Name, RenderEntity);
+            var result = (XElement)serializer.Serialize(null, entity, new DefaultSerializer()).Single();
+
+            var elem = result.Descendants().Single(e => e.Attribute("itemprop") != null && e.Attribute("itemprop").Value != "Id");
+
+            var expected = RenderName(entity.Name).Single();
+
+            Assert.That(elem.ToString(), Is.EqualTo(expected.ToString()));
+        }
+
+        private IEnumerable<XObject> RenderEntity(Entity e)
+        {
+            yield return new XElement("section", new XAttribute("itemprop", "content"), new XText(e.Name));
+        }
+
         private IEnumerable<XObject> RenderName(string name)
         {
             var elem = new XElement("section", new XAttribute("itemprop", "content"), new XText(name));
