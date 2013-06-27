@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using NUnit.Framework;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
@@ -13,6 +14,38 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         public void SetUp()
         {
             serializer = new DefaultSerializer();
+        }
+
+        public class BuildPropertiesTests : DefaultSerializerTests
+        {
+            [Test]
+            public void OmitEmptyProperty()
+            {
+                var props = new[] {new KeyValuePair<string, object>("empty", null)};
+                var context = new SerializationContext(serializer, new CamelCasePropNameProvider());
+
+                var result = serializer.BuildProperties(this, props, context);
+
+                Assert.That(result, Is.Empty);
+            }
+
+            [Test]
+            public void IncludeDataDefinitionPerElement()
+            {
+                var props = new[] { new KeyValuePair<string, object>("ListOfThings", new[] {"a", "b"}) };
+                var context = new SerializationContext(serializer, new CamelCasePropNameProvider());
+
+                var result = serializer.BuildProperties(this, props, context);
+
+                var expected = new[]
+                    {
+                        new XElement("dt", new XText("ListOfThings")),
+                        new XElement("dd", new XElement("span", new XAttribute("itemprop", "listOfThings"), new XText("a"))),
+                        new XElement("dd", new XElement("span", new XAttribute("itemprop", "listOfThings"), new XText("b")))
+                    }.Select(i => i.ToString()).ToArray();
+
+                Assert.That(result.Select(r => r.ToString()), Is.EqualTo(expected));
+            }
         }
 
         public class ReflectPropertyTests : DefaultSerializerTests

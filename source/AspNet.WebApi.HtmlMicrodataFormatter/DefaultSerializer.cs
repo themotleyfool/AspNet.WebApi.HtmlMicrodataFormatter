@@ -61,21 +61,40 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return "http://schema.org/Thing";
         }
 
-        protected virtual IEnumerable<XObject> BuildProperties(object obj, SerializationContext context)
+        protected internal virtual IEnumerable<XObject> BuildProperties(object obj, SerializationContext context)
         {
             var dic = obj as IEnumerable<KeyValuePair<string, object>> ?? Reflect(obj);
+            return BuildProperties(obj, dic, context);
+        }
 
-            foreach (var kv in dic)
+        protected internal virtual IEnumerable<XObject> BuildProperties(object parent, IEnumerable<KeyValuePair<string, object>> items, SerializationContext context)
+        {
+            foreach (var kv in items)
             {
                 var o = kv.Value;
-
-                yield return new XElement("dt", new XText(kv.Key));
-
-                foreach (var propValue in BuildPropertyValue(obj, kv.Key, o, context))
+                var first = true;
+                
+                foreach (var propValue in BuildPropertyValue(parent, kv.Key, o, context))
                 {
+                    if (IsEmpty(propValue)) continue;
+
+                    if (first)
+                    {
+                        first = false;
+                        yield return new XElement("dt", new XText(kv.Key));
+                    }
+
+
                     yield return new XElement("dd", propValue);
                 }
             }
+        }
+
+        protected virtual bool IsEmpty(XObject obj)
+        {
+            var text = obj as XText;
+
+            return obj == null || text != null && string.IsNullOrEmpty(text.Value);
         }
 
         protected internal virtual IEnumerable<XObject> BuildPropertyValue(object parent, string propertyName, object propertyValue, SerializationContext context)

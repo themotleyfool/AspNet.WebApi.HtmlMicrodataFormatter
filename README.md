@@ -1,8 +1,8 @@
 - [x] Let Serializer control what itemtype value to use
-- [X] Render IconUrl as <img> instead of <a>
-- [X] Camel-case itemprop names
-- [X] Test/support DateTime
-- [ ] Omit dt/dd for empty properties
+- [x] Render IconUrl as <img> instead of <a>
+- [x] Camel-case itemprop names
+- [x] Test/support DateTime
+- [x] Omit dt/dd for empty properties
 - [ ] Allow client to control template (html head, etc)
 - [ ] Mechanism to add links with relationships (<a rel="next">)
 
