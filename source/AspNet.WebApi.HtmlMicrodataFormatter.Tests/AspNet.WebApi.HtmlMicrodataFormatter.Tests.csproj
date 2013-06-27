@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DateTimeSerializerTests.cs" />
     <Compile Include="DefaultSerializerTests.cs" />
     <Compile Include="EntitySerializerTests.cs" />
     <Compile Include="HtmlMicrodataFormatterTests.cs" />

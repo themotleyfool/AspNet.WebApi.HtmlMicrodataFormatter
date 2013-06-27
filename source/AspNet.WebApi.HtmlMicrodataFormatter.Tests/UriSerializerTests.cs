@@ -34,10 +34,5 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             Assert.That(attr, Is.Not.Null, "Should include 'itemprop' attribute in <a> element.");
             Assert.That(attr.ToString(), Is.EqualTo(new XAttribute("itemprop", "myProp").ToString()));
         }
-
-        public override string ToString()
-        {
-            return "Sample ToString Implementation";
-        }
     }
 }

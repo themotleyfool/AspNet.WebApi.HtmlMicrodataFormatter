@@ -12,6 +12,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public HtmlMicrodataFormatter()
         {
             serializerRegistry.Register(new UriSerializer());
+            serializerRegistry.Register(new DateTimeSerializer());
             serializerRegistry.Register(new ToStringSerializer(typeof(Version)));
             serializerRegistry.Register(new ApiGroupSerializer());
             serializerRegistry.Register(new ApiDescriptionSerializer());
