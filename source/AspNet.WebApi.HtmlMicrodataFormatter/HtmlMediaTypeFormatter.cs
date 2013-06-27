@@ -17,10 +17,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
     /// </summary>
     public abstract class HtmlMediaTypeFormatter : MediaTypeFormatter
     {
+        private readonly IList<XObject> headElements = new List<XObject>(); 
+
         protected HtmlMediaTypeFormatter()
         {
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/xml"));
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xhtml+xml"));
+            SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xml"));
         }
 
         public override bool CanReadType(Type type)
@@ -58,18 +62,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public abstract IEnumerable<XObject> BuildBody(object value);
 
+        public virtual void AddHeadContent(XObject content)
+        {
+            headElements.Add(content);
+        }
+
         public virtual IEnumerable<XObject> BuildHeadElements(object value)
         {
-            yield return new XElement("link",
-                                      new XAttribute("rel", "stylesheet"),
-                                      new XAttribute("href", "/css/flat-ui.css"),
-                                      new XAttribute("media", "all"),
-                                      new XAttribute("type", "text/css"));
-            yield return new XElement("link",
-                                      new XAttribute("rel", "stylesheet"),
-                                      new XAttribute("href", "/css/app.css"),
-                                      new XAttribute("media", "all"),
-                                      new XAttribute("type", "text/css"));
+            return headElements;
         }
         
         public override void SetDefaultContentHeaders(Type type, HttpContentHeaders headers, MediaTypeHeaderValue mediaType)
