@@ -18,6 +18,15 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             formatter = new HtmlMicrodataFormatter();
         }
         
+        public class CtrTests : HtmlMicrodataFormatterTests
+        {
+            [Test]
+            public void UsesCamelCasePropNameProvider()
+            {
+                Assert.That(formatter.PropNameProvider, Is.InstanceOf<CamelCasePropNameProvider>());
+            }
+        }
+
         public class SerializeTests : HtmlMicrodataFormatterTests
         {
             public class Sample
@@ -37,14 +46,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
                     return "http://example.com/schema/MyCustomThing";
                 }
 
-                protected internal override IEnumerable<XObject> BuildPropertyValue(object obj, string propertyName, object propertyValue, IHtmlMicrodataSerializer rootSerializer)
+                protected internal override IEnumerable<XObject> BuildPropertyValue(object obj, string propertyName, object propertyValue, SerializationContext context)
                 {
                     if (propertyName == "Image")
                     {
                         return new[] {new XElement("img", new XAttribute("itemprop", propertyName))};
                     }
 
-                    return base.BuildPropertyValue(obj, propertyName, propertyValue, rootSerializer);
+                    return base.BuildPropertyValue(obj, propertyName, propertyValue, context);
                 }
             }
 
@@ -128,7 +137,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
                     new XElement("dt", new XText("Name")),
                     new XElement("dd",
                         new XElement("span",
-                            new XAttribute("itemprop", "Name"),
+                            new XAttribute("itemprop", "name"),
                             new XText("Fred"))));
 
                 AssertResultEquals(formatter.BuildBody(expando), expected.ToString());
@@ -153,10 +162,10 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 
                 expando.Names = new[] { "Fred", "Ted" };
 
-                var result = (XElement)Enumerable.Single(formatter.Serialize("PropName", expando, formatter));
+                var result = (XElement)Enumerable.Single(formatter.Serialize("PropName", expando, new SerializationContext { RootSerializer = formatter, PropNameProvider = new CamelCasePropNameProvider()}));
 
                 Assert.That(result.Attribute("itemprop"), Is.Not.Null, "Should set itemprop attribute on <dl>");
-                Assert.That(result.Attribute("itemprop").Value, Is.EqualTo("PropName"));
+                Assert.That(result.Attribute("itemprop").Value, Is.EqualTo("propName"));
             }
 
             private static void AssertResultEquals(IEnumerable<XObject> result, params object[] expectedValues)

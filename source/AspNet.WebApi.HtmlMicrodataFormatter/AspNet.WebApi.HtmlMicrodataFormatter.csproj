@@ -66,8 +66,10 @@
     <Compile Include="EntitySerializer.cs" />
     <Compile Include="HtmlDocumentation.cs" />
     <Compile Include="HtmlMicrodataFormatter.cs" />
-    <Compile Include="HyperMediaHtmlMediaTypeFormatter.cs" />
+    <Compile Include="HtmlMediaTypeFormatter.cs" />
     <Compile Include="IHtmlMicrodataSerializer.cs" />
+    <Compile Include="IPropNameProvider.cs" />
+    <Compile Include="SerializationContext.cs" />
     <Compile Include="SerializerRegistry.cs" />
     <Compile Include="ToStringSerializer.cs" />
     <Compile Include="UriSerializer.cs" />

@@ -11,7 +11,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
     {
         public virtual IEnumerable<Type> SupportedTypes { get { throw new InvalidOperationException(); } }
 
-        public virtual IEnumerable<XObject> Serialize(string propertyName, object obj, IHtmlMicrodataSerializer rootSerializer)
+        public virtual IEnumerable<XObject> Serialize(string propertyName, object obj, SerializationContext context)
         {
             if (obj == null)
             {
@@ -22,10 +22,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             if (obj is string || obj is ValueType)
             {
                 var elem = new XElement("span", obj.ToString());
-                if (!string.IsNullOrEmpty(propertyName))
-                {
-                    elem.SetAttributeValue("itemprop", propertyName);
-                }
+                SetPropertyName(elem, propertyName, context);
                 yield return elem;
                 yield break;
             }
@@ -33,7 +30,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             var items = obj as IEnumerable;
             if (items != null && !(obj is IEnumerable<KeyValuePair<string, object>>))
             {
-                var x = items.OfType<object>().SelectMany(i => BuildPropertyValue(obj, propertyName, i, rootSerializer));
+                var x = items.OfType<object>().SelectMany(i => BuildPropertyValue(obj, propertyName, i, context));
                 foreach (var item in x)
                 {
                     yield return item;
@@ -45,14 +42,18 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             var dataList = new XElement("dl",
                                       new XAttribute("itemtype", GetItemType(obj.GetType())),
                                       new XAttribute("itemscope", "itemscope"),
-                                      BuildProperties(obj, rootSerializer));
+                                      BuildProperties(obj, context));
 
-            if (!string.IsNullOrEmpty(propertyName))
-            {
-                dataList.SetAttributeValue("itemprop", propertyName);
-            }
+            SetPropertyName(dataList, propertyName, context);
 
             yield return dataList;
+        }
+
+        protected virtual void SetPropertyName(XElement element, string propertyName, SerializationContext context)
+        {
+            if (string.IsNullOrEmpty(propertyName)) return;
+
+            element.SetAttributeValue("itemprop", context.PropNameProvider.GetItemProp(propertyName));
         }
 
         protected virtual string GetItemType(Type type)
@@ -60,7 +61,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return "http://schema.org/Thing";
         }
 
-        protected virtual IEnumerable<XObject> BuildProperties(object obj, IHtmlMicrodataSerializer rootSerializer)
+        protected virtual IEnumerable<XObject> BuildProperties(object obj, SerializationContext context)
         {
             var dic = obj as IEnumerable<KeyValuePair<string, object>> ?? Reflect(obj);
 
@@ -70,16 +71,16 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
                 yield return new XElement("dt", new XText(kv.Key));
 
-                foreach (var propValue in BuildPropertyValue(obj, kv.Key, o, rootSerializer))
+                foreach (var propValue in BuildPropertyValue(obj, kv.Key, o, context))
                 {
                     yield return new XElement("dd", propValue);
                 }
             }
         }
 
-        protected internal virtual IEnumerable<XObject> BuildPropertyValue(object obj, string propertyName, object propertyValue, IHtmlMicrodataSerializer rootSerializer)
+        protected internal virtual IEnumerable<XObject> BuildPropertyValue(object parent, string propertyName, object propertyValue, SerializationContext context)
         {
-            return rootSerializer.Serialize(propertyName, propertyValue, rootSerializer);
+            return context.RootSerializer.Serialize(propertyName, propertyValue, context);
         }
 
         protected internal virtual IEnumerable<KeyValuePair<string, object>> Reflect(object value)

@@ -11,9 +11,13 @@ using System.Xml.Linq;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
-    public abstract class HyperMediaHtmlMediaTypeFormatter : MediaTypeFormatter
+    /// <summary>
+    /// Base class for formatting objects as well-formed HTML.
+    /// Subclasses must implement <see cref="BuildBody"/>.
+    /// </summary>
+    public abstract class HtmlMediaTypeFormatter : MediaTypeFormatter
     {
-        protected HyperMediaHtmlMediaTypeFormatter()
+        protected HtmlMediaTypeFormatter()
         {
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xhtml+xml"));

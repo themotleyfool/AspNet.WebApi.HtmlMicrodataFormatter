@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
-    public class HtmlMicrodataFormatter : HyperMediaHtmlMediaTypeFormatter, IHtmlMicrodataSerializer
+    public class HtmlMicrodataFormatter : HtmlMediaTypeFormatter, IHtmlMicrodataSerializer
     {
         private readonly SerializerRegistry serializerRegistry = new SerializerRegistry();
 
@@ -14,6 +15,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             serializerRegistry.Register(new ToStringSerializer(typeof(Version)));
             serializerRegistry.Register(new ApiGroupSerializer());
             serializerRegistry.Register(new ApiDescriptionSerializer());
+
+            PropNameProvider = new CamelCasePropNameProvider();
         }
 
         public void RegisterSerializer(IHtmlMicrodataSerializer serializer)
@@ -28,17 +31,20 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public override IEnumerable<XObject> BuildBody(object value)
         {
-            return Serialize(null, value, this);
+            var context = new SerializationContext {RootSerializer = this, PropNameProvider = PropNameProvider};
+            return Serialize(null, value, context);
         }
 
-        public IEnumerable<Type> SupportedTypes { get { throw new InvalidOperationException(); } }
+        public IPropNameProvider PropNameProvider { get; set; }
 
-        public IEnumerable<XObject> Serialize(string propertyName, object obj, IHtmlMicrodataSerializer rootSerializer)
+        public IEnumerable<Type> SupportedTypes { get { return Enumerable.Empty<Type>(); } }
+
+        public IEnumerable<XObject> Serialize(string propertyName, object obj, SerializationContext context)
         {
             var type = obj == null ? typeof (string) : obj.GetType();
             var serializer = serializerRegistry.GetSerializer(type);
 
-            return serializer.Serialize(propertyName, obj, rootSerializer);
+            return serializer.Serialize(propertyName, obj, context);
         }
     }
 }

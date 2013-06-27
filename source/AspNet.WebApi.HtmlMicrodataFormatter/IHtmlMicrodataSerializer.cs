@@ -7,6 +7,6 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
     public interface IHtmlMicrodataSerializer
     {
         IEnumerable<Type> SupportedTypes { get; }
-        IEnumerable<XObject> Serialize(string propertyName, object obj, IHtmlMicrodataSerializer rootSerializer);
+        IEnumerable<XObject> Serialize(string propertyName, object obj, SerializationContext context);
     }
 }

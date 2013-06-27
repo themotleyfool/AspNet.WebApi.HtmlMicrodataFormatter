@@ -10,12 +10,16 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
     {
         private EntitySerializer<Entity> serializer;
         private Entity entity;
+        private DefaultSerializer defaultSerializer;
+        private SerializationContext context;
 
         [SetUp]
         public void SetUp()
         {
             serializer = new EntitySerializer<Entity>();
             entity = new Entity {Id = 2, Name = "enty"};
+            defaultSerializer = new DefaultSerializer();
+            context = new SerializationContext(defaultSerializer, new IdentityPropNameProvider());
         }
 
         public class Entity
@@ -27,10 +31,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         [Test]
         public void BehavesLikeDefaultSerializerByDefault()
         {
-            var defaultSerializer = new DefaultSerializer();
             
-            var result = serializer.Serialize(null, entity, defaultSerializer).Single();
-            var expected = defaultSerializer.Serialize(null, entity, defaultSerializer).Single();
+
+            
+            var result = serializer.Serialize(null, entity, context).Single();
+            var expected = defaultSerializer.Serialize(null, entity, context).Single();
 
             Assert.That(result.ToString(), Is.EqualTo(expected.ToString()));
         }
@@ -39,7 +44,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         public void SetItemType()
         {
             serializer.ItemType = "example";
-            var result = (XElement) serializer.Serialize(null, entity, new DefaultSerializer()).Single();
+            var result = (XElement)serializer.Serialize(null, entity, context).Single();
             Assert.That(result.Attribute("itemtype").Value, Is.EqualTo("example"));
         }
 
@@ -47,7 +52,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         public void CustomPropertyHandler()
         {
             serializer.Property(e => e.Name, RenderName);
-            var result = (XElement)serializer.Serialize(null, entity, new DefaultSerializer()).Single();
+            var result = (XElement)serializer.Serialize(null, entity, context).Single();
 
             var elem = result.Descendants().Single(e => e.Attribute("itemprop") != null && e.Attribute("itemprop").Value != "Id");
             
@@ -60,7 +65,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         public void CustomPropertyHandlerAlternateSignature()
         {
             serializer.Property(e => e.Name, RenderEntity);
-            var result = (XElement)serializer.Serialize(null, entity, new DefaultSerializer()).Single();
+            var result = (XElement)serializer.Serialize(null, entity, context).Single();
 
             var elem = result.Descendants().Single(e => e.Attribute("itemprop") != null && e.Attribute("itemprop").Value != "Id");
 

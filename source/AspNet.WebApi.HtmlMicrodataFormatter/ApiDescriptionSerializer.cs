@@ -14,7 +14,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             get { return new[] { typeof(IEnumerable<ApiGroup>) }; }
         }
 
-        public override IEnumerable<XObject> Serialize(string propertyName, object obj, IHtmlMicrodataSerializer rootSerializer)
+        public override IEnumerable<XObject> Serialize(string propertyName, object obj, SerializationContext context)
         {
             var descriptions = (IEnumerable<ApiGroup>)obj;
 
@@ -23,7 +23,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 yield return new XElement("section",
                                               new XAttribute("class", "api-group"),
                                               BuildApiGroupSummary(g),
-                                              g.Actions.Select(api => base.Serialize(propertyName, api, rootSerializer)));
+                                              g.Actions.Select(api => base.Serialize(propertyName, api, context)));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             get { return new[] {typeof (ApiDescription)}; }
         }
 
-        public override IEnumerable<XObject> Serialize(string propertyName, object obj, IHtmlMicrodataSerializer rootSerializer)
+        public override IEnumerable<XObject> Serialize(string propertyName, object obj, SerializationContext context)
         {
             yield return BuildApi((ApiDescription) obj);
         }

@@ -18,14 +18,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             get { return supportedTypes; }
         }
 
-        public override IEnumerable<XObject> Serialize(string propertyName, object obj, IHtmlMicrodataSerializer rootSerializer)
+        public override IEnumerable<XObject> Serialize(string propertyName, object obj, SerializationContext context)
         {
             var elem = new XElement("span", obj.ToString());
 
-            if (!string.IsNullOrWhiteSpace(propertyName))
-            {
-                elem.SetAttributeValue("itemprop", propertyName);
-            }
+            SetPropertyName(elem, propertyName, context);
 
             return new[] { elem };
         }

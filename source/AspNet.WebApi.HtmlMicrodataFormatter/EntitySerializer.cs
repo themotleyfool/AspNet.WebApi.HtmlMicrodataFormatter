@@ -39,7 +39,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             entityHandlers.Add(info.Name, entityHandler);
         }
 
-        protected internal override IEnumerable<XObject> BuildPropertyValue(object entity, string propertyName, object propertyValue, IHtmlMicrodataSerializer rootSerializer)
+        protected internal override IEnumerable<XObject> BuildPropertyValue(object entity, string propertyName, object propertyValue, SerializationContext context)
         {
             Delegate handler;
             if (entityHandlers.TryGetValue(propertyName, out handler))
@@ -50,8 +50,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             {
                 return (IEnumerable<XObject>)handler.DynamicInvoke(propertyValue);
             }
-            
-            return base.BuildPropertyValue(entity, propertyName, propertyValue, rootSerializer);
+
+            return base.BuildPropertyValue(entity, propertyName, propertyValue, context);
         }
 
         private MemberInfo GetMemberInfo(Expression expression)
