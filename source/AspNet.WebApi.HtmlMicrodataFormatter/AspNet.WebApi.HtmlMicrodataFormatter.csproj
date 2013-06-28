@@ -72,6 +72,7 @@
     <Compile Include="IPropNameProvider.cs" />
     <Compile Include="SerializationContext.cs" />
     <Compile Include="SerializerRegistry.cs" />
+    <Compile Include="TimeSpanSerializer.cs" />
     <Compile Include="ToStringSerializer.cs" />
     <Compile Include="UriSerializer.cs" />
     <Compile Include="WebApiHtmlDocumentationProvider.cs" />

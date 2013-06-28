@@ -21,8 +21,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         [Test]
         public void DefaultFormats()
         {
-            Assert.That(serializer.DataDateFormat, Is.EqualTo("s"));
-            Assert.That(serializer.TextDateFormat, Is.EqualTo("R"));
+            Assert.That(serializer.DataFormat, Is.EqualTo(DateTimeSerializer.SortableUtcFormat));
+            Assert.That(serializer.TextFormat, Is.EqualTo("R"));
         }
 
         [Test]
@@ -33,9 +33,9 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             var result = (XElement)serializer.Serialize("MyProp", date, context).Single();
 
             var expected = new XElement("time",
-                new XAttribute("datetime", date.ToString(serializer.DataDateFormat)),
+                new XAttribute("datetime", date.ToString(serializer.DataFormat)),
                 new XAttribute("itemprop", "myProp"),
-                new XText(date.ToString(serializer.TextDateFormat)));
+                new XText(date.ToString(serializer.TextFormat)));
 
             Assert.That(result.ToString(), Is.EqualTo(expected.ToString()));
         }
@@ -48,9 +48,9 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             var result = (XElement)serializer.Serialize("MyProp", date, context).Single();
 
             var expected = new XElement("time",
-                new XAttribute("datetime", date.ToString(serializer.DataDateFormat)),
+                new XAttribute("datetime", date.ToString(serializer.DataFormat)),
                 new XAttribute("itemprop", "myProp"),
-                new XText(date.ToString(serializer.TextDateFormat)));
+                new XText(date.ToString(serializer.TextFormat)));
 
             Assert.That(result.ToString(), Is.EqualTo(expected.ToString()));
         }
@@ -63,9 +63,9 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             var result = (XElement)serializer.Serialize("MyProp", date, context).Single();
 
             var expected = new XElement("time",
-                new XAttribute("datetime", date.ToString(serializer.DataDateFormat)),
+                new XAttribute("datetime", date.ToString(serializer.DataFormat)),
                 new XAttribute("itemprop", "myProp"),
-                new XText(date.ToString(serializer.TextDateFormat)));
+                new XText(date.ToString(serializer.TextFormat)));
 
             Assert.That(result.ToString(), Is.EqualTo(expected.ToString()));
         }
