@@ -67,6 +67,7 @@
     <Compile Include="DefaultSerializerTests.cs" />
     <Compile Include="EntitySerializerTests.cs" />
     <Compile Include="HtmlMicrodataFormatterTests.cs" />
+    <Compile Include="LinkSerializerTests.cs" />
     <Compile Include="TimeSpanSerializerTests.cs" />
     <Compile Include="ToStringSerializerTests.cs" />
     <Compile Include="UriSerializerTests.cs" />

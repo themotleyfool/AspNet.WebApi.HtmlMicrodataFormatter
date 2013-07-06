@@ -4,7 +4,7 @@
 - [x] Test/support DateTime
 - [x] Omit dt/dd for empty properties
 - [x] Allow client to control template (html head, etc)
-- [ ] Mechanism to add links with relationships (<a rel="next">)
+- [x] Mechanism to add links with relationships (<a rel="next">)
 
 Discoverable Api
 - [ ] Add more custom input types (select, file, etc)

@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiDescriptionSerializer.cs" />
+    <Compile Include="Link.cs" />
     <Compile Include="DateTimeSerializer.cs" />
     <Compile Include="DefaultSerializer.cs" />
     <Compile Include="DocumentationController.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="HtmlMediaTypeFormatter.cs" />
     <Compile Include="IHtmlMicrodataSerializer.cs" />
     <Compile Include="IPropNameProvider.cs" />
+    <Compile Include="LinkSerializer.cs" />
     <Compile Include="SerializationContext.cs" />
     <Compile Include="SerializerRegistry.cs" />
     <Compile Include="TimeSpanSerializer.cs" />
