@@ -6,6 +6,9 @@ using System.Xml.Linq;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
+    public delegate IEnumerable<XObject> PropertyHandler<in TProperty>(string s, TProperty q);
+    public delegate IEnumerable<XObject> PropertyHandlerWithoutName<in TProperty>(TProperty q);
+
     public class EntitySerializer<T> : DefaultSerializer
     {
         private readonly IDictionary<string, Delegate> entityHandlers =
@@ -25,10 +28,15 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return ItemType ?? base.GetItemType(type);
         }
 
-        public void Property<TProperty>(Expression<Func<T, TProperty>> expression, Func<TProperty, IEnumerable<XObject>> propertyHandler)
+        public void Property<TProperty>(Expression<Func<T, TProperty>> expression, PropertyHandlerWithoutName<TProperty> propertyHandler)
+        {
+            PropertyHandler<TProperty> wrapper = (name, value) => propertyHandler(value);
+            Property(expression, wrapper);
+        }
+
+        public void Property<TProperty>(Expression<Func<T, TProperty>> expression, PropertyHandler<TProperty> propertyHandler)
         {
             var info = GetMemberInfo(expression.Body);
-
             propertyHandlers.Add(info.Name, propertyHandler);
         }
 
@@ -48,7 +56,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             }
             if (propertyHandlers.TryGetValue(propertyName, out handler))
             {
-                return (IEnumerable<XObject>)handler.DynamicInvoke(propertyValue);
+                return (IEnumerable<XObject>)handler.DynamicInvoke(propertyName, propertyValue);
             }
 
             return base.BuildPropertyValue(entity, propertyName, propertyValue, context);
@@ -74,5 +82,6 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
             return memberExpression.Member;
         }
+
     }
 }

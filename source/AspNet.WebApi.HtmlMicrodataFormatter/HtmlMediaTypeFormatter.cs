@@ -34,7 +34,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public override bool CanWriteType(Type type)
         {
-            var target = typeof(IEnumerable<ApiGroup>);
+            var target = typeof(IEnumerable<SimpleApiGroup>);
             return target.IsAssignableFrom(type);
         }
 
@@ -42,7 +42,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                                                       TransportContext transportContext)
         {
             var buffer = new MemoryStream();
-            var xmlWriter = XmlWriter.Create(buffer, new XmlWriterSettings { Indent = true });
+            var xmlWriter = XmlWriter.Create(buffer, new XmlWriterSettings { Indent = false });
 
             using (xmlWriter)
             {

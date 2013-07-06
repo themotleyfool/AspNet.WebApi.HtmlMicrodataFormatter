@@ -12,10 +12,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public HtmlMicrodataFormatter()
         {
             serializerRegistry.Register(new UriSerializer());
+            serializerRegistry.Register(new LinkSerializer());
             serializerRegistry.Register(new DateTimeSerializer());
             serializerRegistry.Register(new TimeSpanSerializer());
             serializerRegistry.Register(new ToStringSerializer(typeof(Version)));
-            serializerRegistry.Register(new ApiGroupSerializer());
+            serializerRegistry.Register(new ApiDocumentationSerializer());
             serializerRegistry.Register(new ApiDescriptionSerializer());
 
             PropNameProvider = new CamelCasePropNameProvider();

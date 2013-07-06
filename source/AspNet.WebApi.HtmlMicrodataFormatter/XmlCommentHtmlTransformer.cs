@@ -73,13 +73,4 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             }
         }
     }
-
-    public class ApiGroup
-    {
-        public string Name { get; set; }
-        public string Documentation { get; set; }
-
-        public IEnumerable<ApiDescription> Actions { get; set; }
-    }
-
 }

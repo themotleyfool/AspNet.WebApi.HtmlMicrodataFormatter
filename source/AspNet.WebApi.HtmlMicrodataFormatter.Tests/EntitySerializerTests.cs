@@ -31,9 +31,6 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         [Test]
         public void BehavesLikeDefaultSerializerByDefault()
         {
-            
-
-            
             var result = serializer.Serialize(null, entity, context).Single();
             var expected = defaultSerializer.Serialize(null, entity, context).Single();
 
@@ -62,6 +59,19 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         }
 
         [Test]
+        public void CustomPropertyHandlerWithName()
+        {
+            serializer.Property(e => e.Name, RenderProperty);
+            var result = (XElement)serializer.Serialize(null, entity, context).Single();
+
+            var elem = result.Descendants().Single(e => e.Attribute("itemprop") != null && e.Attribute("itemprop").Value != "Id");
+
+            var expected = RenderProperty("Name", entity.Name).Single();
+
+            Assert.That(elem.ToString(), Is.EqualTo(expected.ToString()));
+        }
+
+        [Test]
         public void CustomPropertyHandlerAlternateSignature()
         {
             serializer.Property(e => e.Name, RenderEntity);
@@ -84,5 +94,13 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             var elem = new XElement("section", new XAttribute("itemprop", "content"), new XText(name));
             return new[] {elem};
         }
+
+        private IEnumerable<XObject> RenderProperty(string propertyName, string value)
+        {
+            var elem = new XElement("section", new XAttribute("itemprop", propertyName), new XText(value));
+            return new[] { elem };
+        }
+
+
     }
 }
