@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
@@ -29,7 +28,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             }
         }
 
-        public SimpleApiDocumentation GetDocumentation()
+        public virtual SimpleApiDocumentation GetDocumentation()
         {
             var apiExplorer = Configuration.Services.GetApiExplorer();
 
