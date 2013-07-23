@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<VersionPrefix>1.0.0</VersionPrefix>
-
-		<!-- like alpha, preview, test -->
-		<VersionSuffix></VersionSuffix>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -18,6 +15,8 @@
 
 		<AssemblyVersion>$(VersionPrefix).$(BuildNumber)</AssemblyVersion>
 
+		<VersionSuffix Condition=" '$(TRAVIS)' == 'true' ">build$(BuildNumber)</VersionSuffix>
+
 		<PackageVersion>$(VersionPrefix)</PackageVersion>
 		<PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(PackageVersion)-$(VersionSuffix)</PackageVersion>
 
@@ -30,10 +29,10 @@
 		<VersionInfoContent Include="[assembly: global::System.Reflection.AssemblyInformationalVersionAttribute(&quot;$(AssemblyInformationalVersion)&quot;)]"/>
 	</ItemGroup>
 
-	<Target Name="Build" DependsOnTargets="GenerateVersionInfo;Compile;Test;Package"/>
+	<Target Name="Build" DependsOnTargets="GenerateVersionInfo;Compile;Test;Package;Publish"/>
 
 	<Target Name="Compile">
-		<MSBuild Projects="source/HtmlMicrodataFormatter.sln" Targets="Build" Properties="Configuration=Debug"/>
+		<MSBuild Projects="source/HtmlMicrodataFormatter.sln" Targets="Build" Properties="Configuration=Debug;RestorePackages=true;PackageSources=http://nuget.org/api/v2"/>
 		<MSBuild Projects="source/HtmlMicrodataFormatter.sln" Targets="Build" Properties="Configuration=Release;RestorePackages=false"/>
 	</Target>
 
@@ -42,11 +41,16 @@
 	</Target>
 
 	<Target Name="Package">
-		<Exec Command="$(NuGetCommand) pack -o $(MSBuildProjectDirectory)/build -Properties Configuration=Release -Version $(PackageVersion) -Symbols"
+		<Exec Command="$(NuGetCommand) pack -o $(MSBuildProjectDirectory)/build -Properties Configuration=Release -Version &quot;$(PackageVersion)&quot; -Symbols"
 			WorkingDirectory="source"/>
 	</Target>
 
-	<Target Name="GenerateVersionInfo">
+  <Target Name="Publish" Condition=" '$(NuGetPublishUrl)' != '' ">
+	<Exec Command="$(NuGetCommand) push &quot;AspNet.WebApi.HtmlMicrodataFormatter.$(PackageVersion).nupkg&quot; -Source &quot;$(NuGetPublishUrl)&quot; -ApiKey &quot;$(NUGET_API_KEY)&quot;"
+			WorkingDirectory="build"/>
+  </Target>
+
+  <Target Name="GenerateVersionInfo">
 		<MakeDir Directories="build"/>
 		<WriteLinesToFile File="build/VersionInfo.cs" Lines="@(VersionInfoContent)" Overwrite="true"/>
 		<Message Text="PackageVersion: $(PackageVersion)"/>

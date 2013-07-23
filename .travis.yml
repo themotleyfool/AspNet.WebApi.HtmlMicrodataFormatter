@@ -1,0 +1,14 @@
+language: c
+
+install:
+  - sudo sh -c 'echo deb http://ppa.launchpad.net/borgdylan/ppa/ubuntu precise main >> /etc/apt/sources.list'
+  - sudo apt-get update
+  - sudo apt-get -q -y --force-yes install cmake mono-devel mono-gmcs mono-xbuild nunit-console
+  - mozroots --import --sync
+
+script:
+  - xbuild IntegratedBuild.proj
+
+env:
+  global:
+    - NUGET_API_KEY=super_secret
