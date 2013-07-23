@@ -9,3 +9,5 @@ _NCrunch*
 bin/
 obj/
 _ReSharper.*
+
+TestResult.xml

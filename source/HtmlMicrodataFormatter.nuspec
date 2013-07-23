@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>AspNet.WebApi.HtmlMicrodataFormatter</id>
+    <title>HtmlMicrodataFormatter</title>
+    <version>$version$</version>
+    <owners>The Motley Fool, LLC</owners>
+    <authors>Chris Eldredge</authors>
+    <copyright>Copyright 2013 The Motley Fool, LLC</copyright>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter</projectUrl>
+    <licenseUrl>https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter/blob/master/LICENSE.txt</licenseUrl>
+    <tags>microdata rest webapi HATEOAS</tags>
+    <summary>
+      Provides an html5/microdata MediaTypeFormatter for WebApi.
+    </summary>
+    <description>
+      See the project page for more information and examples.
+    </description>
+    <releaseNotes>
+      See https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter/releases
+    </releaseNotes>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.WebApi.WebHost" version="[4.0.30506, 5.0)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="AspNet.WebApi.HtmlMicrodataFormatter\bin\$configuration$\AspNet.WebApi.HtmlMicrodataFormatter.dll" target="lib\net40"/>
+  </files>
+</package>
