@@ -1,11 +1,11 @@
-language: objective-c
+language: c
 env:
   global:
-  - MONO_VER=3.1.2
-  - secure: FrblGcQdCrA1EmNFZu/TmScCxAOmsIZYTCfsc78qVIOUIkwEwif5Fttr+kLFtsFCmDGDnqyDXRkwqeuoCnO6NPvM7ghRkNmDSioE98rnU1XnazBSAkjSB+rQTgycueGTSozwSDlmUW/nSKrEjed5Om1zBUVeCe4VMd8ndjCnTnQ=
+    secure: ZbEpp3yr+TISwO17MTQbeg+n9jq9eOnbbWSjJZ+WId7C+h2Bl9pUILP/3L+r8TzY8xDW0FUkReQK6ySVWfBrdj0Nx/Ur0wxGh2n1PosCZBHJC56w1YWzZ5CG8tmscm9hJBnYQcZKlhfuykMqbh2xos09DEBAqqYdS3WIcwae5lI=
 install:
- - wget "http://download.mono-project.com/archive/${MONO_VER}/macos-10-x86/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg"
- - hdid "MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg"
- - sudo installer -pkg "/Volumes/Mono Framework MDK ${MONO_VER}/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.pkg" -target /
+- sudo sh -c 'echo deb http://ppa.launchpad.net/borgdylan/ppa/ubuntu precise main >> /etc/apt/sources.list'
+- sudo apt-get update
+- sudo apt-get -q -y --force-yes install cmake mono-devel mono-gmcs mono-xbuild nunit-console
+- mozroots --import --sync
 script:
- - xbuild
+- xbuild /p:TestsEnabled=false

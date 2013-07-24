@@ -21,6 +21,10 @@
 		<PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(PackageVersion)-$(VersionSuffix)</PackageVersion>
 
 		<AssemblyInformationalVersion>$(PackageVersion) $(VersionControlInfo)</AssemblyInformationalVersion>
+
+		<TestsEnabled>true</TestsEnabled>
+
+		<NuGetPublishUrl Condition=" '$(TRAVIS)' == 'true' ">https://staging.nuget.org/</NuGetPublishUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -36,7 +40,7 @@
 		<MSBuild Projects="source/HtmlMicrodataFormatter.sln" Targets="Build" Properties="Configuration=Release;RestorePackages=false"/>
 	</Target>
 
-	<Target Name="Test">
+	<Target Name="Test" Condition=" '$(TestsEnabled)' == 'true' ">
 		<Exec Command="nunit-console ./source/AspNet.WebApi.HtmlMicrodataFormatter.Tests/bin/Debug/AspNet.WebApi.HtmlMicrodataFormatter.Tests.dll -noshadow"/>
 	</Target>
 
