@@ -1,14 +1,11 @@
-language: c
-
-install:
-  - sudo sh -c 'echo deb http://ppa.launchpad.net/borgdylan/ppa/ubuntu precise main >> /etc/apt/sources.list'
-  - sudo apt-get update
-  - sudo apt-get -q -y --force-yes install cmake mono-devel mono-gmcs mono-xbuild nunit-console
-  - mozroots --import --sync
-
-script:
-  - xbuild IntegratedBuild.proj
-
+language: objective-c
 env:
   global:
-    - NUGET_API_KEY=super_secret
+  - MONO_VER=3.1.2
+  - secure: FrblGcQdCrA1EmNFZu/TmScCxAOmsIZYTCfsc78qVIOUIkwEwif5Fttr+kLFtsFCmDGDnqyDXRkwqeuoCnO6NPvM7ghRkNmDSioE98rnU1XnazBSAkjSB+rQTgycueGTSozwSDlmUW/nSKrEjed5Om1zBUVeCe4VMd8ndjCnTnQ=
+install:
+ - wget "http://download.mono-project.com/archive/${MONO_VER}/macos-10-x86/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg"
+ - hdid "MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg"
+ - sudo installer -pkg "/Volumes/Mono Framework MDK ${MONO_VER}/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.pkg" -target /
+script:
+ - xbuild
