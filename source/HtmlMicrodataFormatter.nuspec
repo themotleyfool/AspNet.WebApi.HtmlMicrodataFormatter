@@ -11,10 +11,9 @@
     <projectUrl>https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter</projectUrl>
     <licenseUrl>https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter/blob/master/LICENSE.txt</licenseUrl>
     <tags>microdata rest webapi HATEOAS</tags>
-    <summary>
-      Provides an html5/microdata MediaTypeFormatter for WebApi.
-    </summary>
     <description>
+      Provides an html5/microdata MediaTypeFormatter for WebApi.
+      
       See the project page for more information and examples.
     </description>
     <releaseNotes>
