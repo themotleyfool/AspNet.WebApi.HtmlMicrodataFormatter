@@ -13,8 +13,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public static SimpleApiDescription Simplify(this ApiDescription apiDescription, HttpConfiguration config)
         {
-            var href = config.VirtualPathRoot + apiDescription.Route.RouteTemplate;
-
+            var href = config.MapPath(apiDescription.Route.RouteTemplate);
+            
             var controllerName = apiDescription.ActionDescriptor.ControllerDescriptor.ControllerName;
             var actionName = apiDescription.ActionDescriptor.ActionName;
 

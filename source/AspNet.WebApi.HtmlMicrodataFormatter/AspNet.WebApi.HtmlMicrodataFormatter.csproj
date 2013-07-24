@@ -65,6 +65,7 @@
     </Compile>
     <Compile Include="ApiDescriptionExtensions.cs" />
     <Compile Include="ApiDescriptionSerializer.cs" />
+    <Compile Include="HttpConfigurationExtensions.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="SimpleApiDocumentation.cs" />
     <Compile Include="ApiDocumentationSerializer.cs" />

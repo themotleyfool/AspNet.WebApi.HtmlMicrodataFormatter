@@ -25,16 +25,9 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
         }
 
-        private static string GetAbsoluteUri(HttpRequestMessage request, string relativePath)
-        {
-            return new Uri(request.RequestUri,
-                           request.GetConfiguration().VirtualPathRoot + relativePath)
-                .GetComponents(UriComponents.AbsoluteUri, UriFormat.SafeUnescaped);
-        }
-
         public SimpleApiDescription(HttpRequestMessage request, string name, string relativePath)
         {
-            this.Href = GetAbsoluteUri(request, relativePath);
+            this.Href = request.GetConfiguration().MapPath(relativePath);
             this.Name = name;
             this.Method = "GET";
             this.Parameters = Enumerable.Empty<SimpleApiParameterDescriptor>();

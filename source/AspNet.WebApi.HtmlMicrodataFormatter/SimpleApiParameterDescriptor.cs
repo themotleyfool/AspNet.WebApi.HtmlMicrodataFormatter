@@ -11,6 +11,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public object DefaultValue { get; private set; }
         public bool IsOptional { get; private set; }
 
+        public SimpleApiParameterDescriptor(string name, string callingConvention, object defaultValue, bool isOptional)
+        {
+            Name = name;
+            CallingConvention = callingConvention;
+            DefaultValue = defaultValue;
+            IsOptional = isOptional;
+        }
+
         public SimpleApiParameterDescriptor(HttpParameterDescriptor arg, string routePath)
         {
             this.Name = arg.ParameterName;
