@@ -44,6 +44,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 date = (DateTime) obj;
             }
 
+            if (date.Kind == DateTimeKind.Local)
+            {
+                date = date.ToUniversalTime();
+            }
+
             var element = new XElement("time",
                                        new XAttribute("datetime", date.ToString(DataFormat)),
                                        new XText(date.ToString(TextFormat)));
