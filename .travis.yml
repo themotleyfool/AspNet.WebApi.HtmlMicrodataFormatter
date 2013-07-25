@@ -1,7 +1,7 @@
 language: c
 env:
   global:
-    secure: ZbEpp3yr+TISwO17MTQbeg+n9jq9eOnbbWSjJZ+WId7C+h2Bl9pUILP/3L+r8TzY8xDW0FUkReQK6ySVWfBrdj0Nx/Ur0wxGh2n1PosCZBHJC56w1YWzZ5CG8tmscm9hJBnYQcZKlhfuykMqbh2xos09DEBAqqYdS3WIcwae5lI=
+    secure: tKsXchpRFpGKGcIyiXtV0xPlqaFHIMtAbcmAktYTwk1iGlSBHrFyOx/tSzPGdXMhlIW/pQulMZIeiNOWutt4BZE2i4w5iLNEoC3Gx0SwhJaNrpCLql/O+vaMo+nCejub52MEU40uquyAh33CGlqeLttrgCJ9awRwVsHL7DSlsqA=
 install:
 - sudo sh -c 'echo deb http://ppa.launchpad.net/borgdylan/ppa/ubuntu precise main >> /etc/apt/sources.list'
 - sudo apt-get update
