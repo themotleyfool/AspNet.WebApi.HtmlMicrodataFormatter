@@ -9,15 +9,23 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
     {
         private readonly SerializerRegistry serializerRegistry = new SerializerRegistry();
 
+        public readonly UriSerializer UriSerializer = new UriSerializer();
+        public readonly LinkSerializer LinkSerializer = new LinkSerializer();
+        public readonly DateTimeSerializer DateTimeSerializer = new DateTimeSerializer();
+        public readonly TimeSpanSerializer TimeSpanSerializer = new TimeSpanSerializer();
+        public readonly ToStringSerializer ToStringSerializer = new ToStringSerializer();
+        public readonly ApiDocumentationSerializer ApiDocumentationSerializer = new ApiDocumentationSerializer();
+        public readonly ApiDescriptionSerializer ApiDescriptionSerializer = new ApiDescriptionSerializer();
+
         public HtmlMicrodataFormatter()
         {
-            serializerRegistry.Register(new UriSerializer());
-            serializerRegistry.Register(new LinkSerializer());
-            serializerRegistry.Register(new DateTimeSerializer());
-            serializerRegistry.Register(new TimeSpanSerializer());
-            serializerRegistry.Register(new ToStringSerializer(typeof(Version)));
-            serializerRegistry.Register(new ApiDocumentationSerializer());
-            serializerRegistry.Register(new ApiDescriptionSerializer());
+            serializerRegistry.Register(UriSerializer);
+            serializerRegistry.Register(LinkSerializer);
+            serializerRegistry.Register(DateTimeSerializer);
+            serializerRegistry.Register(TimeSpanSerializer);
+            serializerRegistry.Register(ToStringSerializer);
+            serializerRegistry.Register(ApiDocumentationSerializer);
+            serializerRegistry.Register(ApiDescriptionSerializer);
 
             PropNameProvider = new CamelCasePropNameProvider();
         }
@@ -25,6 +33,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public void RegisterSerializer(IHtmlMicrodataSerializer serializer)
         {
             serializerRegistry.Register(serializer);
+        }
+
+        public void RemoveSerializer(IHtmlMicrodataSerializer serializer)
+        {
+            serializerRegistry.Remove(serializer);
         }
 
         public override bool CanWriteType(Type type)

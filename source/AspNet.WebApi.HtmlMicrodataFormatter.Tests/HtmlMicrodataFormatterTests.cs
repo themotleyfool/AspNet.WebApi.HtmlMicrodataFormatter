@@ -84,6 +84,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 
                 Assert.That(actual.Attributes("itemtype").Select(a => a.Value), Is.EqualTo(new[] {"http://example.com/schema/MyCustomThing"}));
             }
+
+            [Test]
+            public void RemoveSerializer()
+            {
+                formatter.RemoveSerializer(formatter.DateTimeSerializer);
+                var result = formatter.BuildBody(new DateTime()).Single();
+                Assert.That(result.ToString(), Is.EqualTo("<span>1/1/0001 12:00:00 AM</span>"));
+            }
         }
 
         public class BuildPropertyValueTests : HtmlMicrodataFormatterTests

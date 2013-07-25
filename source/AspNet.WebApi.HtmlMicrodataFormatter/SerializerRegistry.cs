@@ -6,8 +6,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
     internal class SerializerRegistry
     {
-        private readonly IDictionary<Type, IHtmlMicrodataSerializer> serializers =
-            new Dictionary<Type, IHtmlMicrodataSerializer>();
+        private readonly IList<IHtmlMicrodataSerializer> serializers =
+            new List<IHtmlMicrodataSerializer>();
 
         public IHtmlMicrodataSerializer DefaultSerializer { get; set; }
 
@@ -23,15 +23,17 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public void Register(IHtmlMicrodataSerializer serializer)
         {
-            foreach (var type in serializer.SupportedTypes)
-            {
-                serializers[type] = serializer;
-            }
+            serializers.Add(serializer);
         }
 
-        public IHtmlMicrodataSerializer GetSerializer(Type t)
+        public IHtmlMicrodataSerializer GetSerializer(Type type)
         {
-            return serializers.FirstOrDefault(kv => kv.Key.IsAssignableFrom(t)).Value ?? DefaultSerializer;
+            return serializers.FirstOrDefault(s => s.SupportedTypes.Any(t => t.IsAssignableFrom(type))) ?? DefaultSerializer;
+        }
+
+        public bool Remove(IHtmlMicrodataSerializer serializer)
+        {
+            return serializers.Remove(serializer);
         }
     }
 }

@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
     public class ToStringSerializer : DefaultSerializer
     {
-        private readonly IEnumerable<Type> supportedTypes;
+        private readonly List<Type> supportedTypes;
 
         public ToStringSerializer(params Type[] supportedTypes)
         {
-            this.supportedTypes = supportedTypes;
+            this.supportedTypes = supportedTypes.ToList();
         }
 
         public override IEnumerable<Type> SupportedTypes
         {
             get { return supportedTypes; }
+        }
+
+        public void AddSupportedTypes(params Type[] type)
+        {
+            supportedTypes.AddRange(type);
         }
 
         public override IEnumerable<XObject> Serialize(string propertyName, object obj, SerializationContext context)
