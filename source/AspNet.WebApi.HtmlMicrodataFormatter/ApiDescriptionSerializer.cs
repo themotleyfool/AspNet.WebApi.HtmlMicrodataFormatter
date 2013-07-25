@@ -59,17 +59,16 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
             foreach (var p in api.Parameters)
             {
-                var id = "ns:todo";
                 var type = GetHtmlInputType(p);
                 
-                yield return new XElement("label", new XAttribute("for", id), new XText(p.Name));
-                yield return new XElement("input",
-                                          new XAttribute("name", p.Name),
-                                          new XAttribute("type", type),
-                                          new XAttribute("value", p.DefaultValue ?? ""),
-                                          new XAttribute("data-required", !p.IsOptional),
-                                          new XAttribute("data-calling-convention", p.CallingConvention)
-                    );
+                yield return new XElement("label", 
+                    new XText(p.Name),
+                    new XElement("input",
+                            new XAttribute("name", p.Name),
+                            new XAttribute("type", type),
+                            new XAttribute("value", p.DefaultValue ?? ""),
+                            new XAttribute("data-required", !p.IsOptional),
+                            new XAttribute("data-calling-convention", p.CallingConvention)));
             }
 
             yield return new XElement("input", new XAttribute("type", "submit"));
