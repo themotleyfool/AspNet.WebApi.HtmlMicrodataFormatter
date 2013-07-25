@@ -49,8 +49,8 @@
 			WorkingDirectory="source"/>
 	</Target>
 
-  <Target Name="Publish" Condition=" '$(NuGetPublishUrl)' != '' ">
-	<Exec Command="$(NuGetCommand) push &quot;AspNet.WebApi.HtmlMicrodataFormatter.$(PackageVersion).nupkg&quot; -Source &quot;$(NuGetPublishUrl)&quot; -ApiKey &quot;$(NUGET_API_KEY)&quot;"
+  <Target Name="Publish" DependsOnTargets="SetNuGetApiKey" Condition=" '$(NuGetPublishUrl)' != '' ">
+	<Exec Command="$(NuGetCommand) push &quot;AspNet.WebApi.HtmlMicrodataFormatter.$(PackageVersion).nupkg&quot; -Source &quot;$(NuGetPublishUrl)&quot; -ApiKey &quot;&quot;"
 			WorkingDirectory="build"/>
   </Target>
 
@@ -60,6 +60,13 @@
 		<Message Text="PackageVersion: $(PackageVersion)"/>
 		<Message Text="AssemblyVersion: $(AssemblyVersion)"/>
 		<Message Text="AssemblyInformationalVersion: $(AssemblyInformationalVersion)"/>
+	</Target>
+
+	<Target Name="SetNuGetApiKey" Condition=" '$(NUGET_API_KEY)' != '' ">
+		<!-- Set the api key without nuget.exe gleefully announcing what the secret key is -->
+		<WriteLinesToFile File="build/set-api-key.sh" Lines="$(NuGetCommand) setApiKey &quot;$(NUGET_API_KEY)&quot; -Source &quot;$(NuGetPublishUrl)&quot; -NonInteractive >/dev/null 2>/dev/null" Overwrite="true"/>
+		<Exec Command="sh build/set-api-key.sh"/>
+		<Delete Files="build/set-api-key.sh"/>
 	</Target>
 
 	<Import Project="source/.nuget/nuget.targets"/>
