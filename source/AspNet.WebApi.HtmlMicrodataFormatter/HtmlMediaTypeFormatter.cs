@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -17,7 +18,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
     /// </summary>
     public abstract class HtmlMediaTypeFormatter : MediaTypeFormatter
     {
-        private readonly IList<XObject> headElements = new List<XObject>(); 
+        private readonly IList<XObject> headElements = new List<XObject>();
 
         protected HtmlMediaTypeFormatter()
         {
@@ -25,6 +26,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/xml"));
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xhtml+xml"));
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xml"));
+            Settings = new XmlWriterSettings();
+            Settings.OmitXmlDeclaration = true;
         }
 
         public override bool CanReadType(Type type)
@@ -41,24 +44,30 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public override async Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content,
                                                       TransportContext transportContext)
         {
-            var buffer = new MemoryStream();
-            var xmlWriter = XmlWriter.Create(buffer, new XmlWriterSettings { Indent = false });
-
+            var buffer = new StringBuilder();
+            var xmlWriter = XmlWriter.Create(buffer, Settings);
+            
             using (xmlWriter)
             {
-                xmlWriter.WriteDocType("html", null, null, null);
-
                 var head = new XElement("head", BuildHeadElements(value));
                 var body = new XElement("body", BuildBody(value));
                 var html = new XElement("html", head, body);
-                
-                html.WriteTo(xmlWriter);
+                var doc = new XDocument(new XDocumentType("html", null, null, null), html);
+
+                doc.WriteTo(xmlWriter);
             }
 
-            buffer.Seek(0, SeekOrigin.Begin);
+            // le sigh
+            buffer.Replace("<!DOCTYPE html >", "<!DOCTYPE html>");
 
-            await buffer.CopyToAsync(writeStream);
+            using (var writer = new StreamWriter(writeStream, Encoding.UTF8))
+            {
+                await writer.WriteAsync(buffer.ToString());
+                await writer.FlushAsync();
+            }
         }
+
+        public XmlWriterSettings Settings { get; set; }
 
         public abstract IEnumerable<XObject> BuildBody(object value);
 
