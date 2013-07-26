@@ -6,8 +6,8 @@ using System.Xml.Linq;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
-    public delegate IEnumerable<XObject> PropertyHandler<in TProperty>(string s, TProperty q);
-    public delegate IEnumerable<XObject> PropertyHandlerWithoutName<in TProperty>(TProperty q);
+    public delegate IEnumerable<XObject> EntityHandler<in TEntity>(TEntity entity, SerializationContext context);
+    public delegate IEnumerable<XObject> PropertyHandler<in TProperty>(string propertyName, TProperty value, SerializationContext context);
 
     public class EntitySerializer<T> : DefaultSerializer
     {
@@ -28,35 +28,34 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return ItemType ?? base.GetItemType(type);
         }
 
-        public void Property<TProperty>(Expression<Func<T, TProperty>> expression, PropertyHandlerWithoutName<TProperty> propertyHandler)
-        {
-            PropertyHandler<TProperty> wrapper = (name, value) => propertyHandler(value);
-            Property(expression, wrapper);
-        }
-
         public void Property<TProperty>(Expression<Func<T, TProperty>> expression, PropertyHandler<TProperty> propertyHandler)
         {
             var info = GetMemberInfo(expression.Body);
             propertyHandlers.Add(info.Name, propertyHandler);
         }
 
-        public void Property(Expression<Func<T, object>> expression, Func<T, IEnumerable<XObject>> entityHandler)
+        public void Property(Expression<Func<T, object>> expression, EntityHandler<T> entityHandler)
         {
             var info = GetMemberInfo(expression.Body);
 
             entityHandlers.Add(info.Name, entityHandler);
         }
 
+        public void Property(string propertyName, EntityHandler<T> entityHandler)
+        {
+            entityHandlers.Add(propertyName, entityHandler);
+        }
+        
         protected internal override IEnumerable<XObject> BuildPropertyValue(object entity, string propertyName, object propertyValue, SerializationContext context)
         {
             Delegate handler;
             if (entityHandlers.TryGetValue(propertyName, out handler))
             {
-                return (IEnumerable<XObject>)handler.DynamicInvoke(entity);
+                return (IEnumerable<XObject>)handler.DynamicInvoke(entity, context);
             }
             if (propertyHandlers.TryGetValue(propertyName, out handler))
             {
-                return (IEnumerable<XObject>)handler.DynamicInvoke(propertyName, propertyValue);
+                return (IEnumerable<XObject>)handler.DynamicInvoke(propertyName, propertyValue, context);
             }
 
             return base.BuildPropertyValue(entity, propertyName, propertyValue, context);

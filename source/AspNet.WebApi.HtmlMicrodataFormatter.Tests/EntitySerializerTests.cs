@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
@@ -49,21 +50,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             var result = (XElement)serializer.Serialize(null, entity, context).Single();
 
             var elem = result.Descendants().Single(e => e.Attribute("itemprop") != null && e.Attribute("itemprop").Value != "Id");
-            
-            var expected = RenderName(entity.Name).Single();
 
-            Assert.That(elem.ToString(), Is.EqualTo(expected.ToString()));
-        }
-
-        [Test]
-        public void CustomPropertyHandlerWithName()
-        {
-            serializer.Property(e => e.Name, RenderProperty);
-            var result = (XElement)serializer.Serialize(null, entity, context).Single();
-
-            var elem = result.Descendants().Single(e => e.Attribute("itemprop") != null && e.Attribute("itemprop").Value != "Id");
-
-            var expected = RenderProperty("Name", entity.Name).Single();
+            var expected = RenderName("Name", entity.Name, context).Single();
 
             Assert.That(elem.ToString(), Is.EqualTo(expected.ToString()));
         }
@@ -77,28 +65,21 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 
             var elem = result.Descendants().Single(e => e.Attribute("itemprop") != null && e.Attribute("itemprop").Value != "Id");
 
-            var expected = RenderName(entity.Name).Single();
+            var expected = RenderName("Name", entity.Name, context).Single();
 
             Assert.That(elem.ToString(), Is.EqualTo(expected.ToString()));
         }
 
-        private IEnumerable<XObject> RenderEntity(Entity e)
+        private IEnumerable<XObject> RenderEntity(Entity e, SerializationContext context)
         {
             yield return new XElement("section", new XAttribute("itemprop", "content"), new XText(e.Name));
         }
 
-        private IEnumerable<XObject> RenderName(string name)
+        private IEnumerable<XObject> RenderName(string propName, string name, SerializationContext context)
         {
             var elem = new XElement("section", new XAttribute("itemprop", "content"), new XText(name));
             return new[] {elem};
         }
-
-        private IEnumerable<XObject> RenderProperty(string propertyName, string value)
-        {
-            var elem = new XElement("section", new XAttribute("itemprop", propertyName), new XText(value));
-            return new[] { elem };
-        }
-
 
     }
 }
