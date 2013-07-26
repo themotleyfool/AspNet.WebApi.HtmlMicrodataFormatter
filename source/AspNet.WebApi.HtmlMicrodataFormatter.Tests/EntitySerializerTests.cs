@@ -6,20 +6,16 @@ using NUnit.Framework;
 namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 {
     [TestFixture]
-    public class EntitySerializerTests
+    public class EntitySerializerTests : SerializerTestBase<EntitySerializer<EntitySerializerTests.Entity>>
     {
-        private EntitySerializer<Entity> serializer;
         private Entity entity;
         private DefaultSerializer defaultSerializer;
-        private SerializationContext context;
 
         [SetUp]
         public void SetUp()
         {
-            serializer = new EntitySerializer<Entity>();
             entity = new Entity {Id = 2, Name = "enty"};
             defaultSerializer = new DefaultSerializer();
-            context = new SerializationContext(defaultSerializer, new IdentityPropNameProvider());
         }
 
         public class Entity
@@ -48,6 +44,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         [Test]
         public void CustomPropertyHandler()
         {
+            context.PropNameProvider = new IdentityPropNameProvider();
             serializer.Property(e => e.Name, RenderName);
             var result = (XElement)serializer.Serialize(null, entity, context).Single();
 
@@ -74,6 +71,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         [Test]
         public void CustomPropertyHandlerAlternateSignature()
         {
+            context.PropNameProvider = new IdentityPropNameProvider();
             serializer.Property(e => e.Name, RenderEntity);
             var result = (XElement)serializer.Serialize(null, entity, context).Single();
 

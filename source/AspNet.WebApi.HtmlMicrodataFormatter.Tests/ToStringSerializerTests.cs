@@ -5,18 +5,8 @@ using NUnit.Framework;
 namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 {
     [TestFixture]
-    public class ToStringSerializerTests
+    public class ToStringSerializerTests : SerializerTestBase<ToStringSerializer>
     {
-        private ToStringSerializer serializer;
-        private SerializationContext context;
-
-        [SetUp]
-        public void SetUp()
-        {
-            serializer = new ToStringSerializer();
-            context = new SerializationContext(serializer, new CamelCasePropNameProvider());
-        }
-
         [Test]
         public void NullPropertyName()
         {

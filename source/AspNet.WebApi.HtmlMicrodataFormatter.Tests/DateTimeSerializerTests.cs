@@ -6,18 +6,8 @@ using NUnit.Framework;
 namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 {
     [TestFixture]
-    public class DateTimeSerializerTests
+    public class DateTimeSerializerTests : SerializerTestBase<DateTimeSerializer>
     {
-        private DateTimeSerializer serializer;
-        private SerializationContext context;
-
-        [SetUp]
-        public void SetUp()
-        {
-            serializer = new DateTimeSerializer();
-            context = new SerializationContext(serializer, new CamelCasePropNameProvider());
-        }
-
         [Test]
         public void DefaultFormats()
         {

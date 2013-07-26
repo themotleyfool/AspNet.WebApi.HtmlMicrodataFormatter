@@ -6,18 +6,8 @@ using NUnit.Framework;
 namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 {
     [TestFixture]
-    public class LinkSerializerTests
+    public class LinkSerializerTests : SerializerTestBase<LinkSerializer>
     {
-        private LinkSerializer serializer;
-        private SerializationContext context;
-
-        [SetUp]
-        public void SetUp()
-        {
-            serializer = new LinkSerializer();
-            context = new SerializationContext(serializer, new CamelCasePropNameProvider());
-        }
-
         [Test]
         public void NullPropertyName()
         {

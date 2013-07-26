@@ -6,23 +6,14 @@ using NUnit.Framework;
 namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 {
     [TestFixture]
-    public class DefaultSerializerTests
+    public class DefaultSerializerTests : SerializerTestBase<DefaultSerializer>
     {
-        private DefaultSerializer serializer;
-
-        [SetUp]
-        public void SetUp()
-        {
-            serializer = new DefaultSerializer();
-        }
-
         public class BuildPropertiesTests : DefaultSerializerTests
         {
             [Test]
             public void OmitEmptyProperty()
             {
                 var props = new[] {new KeyValuePair<string, object>("empty", null)};
-                var context = new SerializationContext(serializer, new CamelCasePropNameProvider());
 
                 var result = serializer.BuildProperties(this, props, context);
 
@@ -33,7 +24,6 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             public void IncludeDataDefinitionPerElement()
             {
                 var props = new[] { new KeyValuePair<string, object>("ListOfThings", new[] {"a", "b"}) };
-                var context = new SerializationContext(serializer, new CamelCasePropNameProvider());
 
                 var result = serializer.BuildProperties(this, props, context);
 

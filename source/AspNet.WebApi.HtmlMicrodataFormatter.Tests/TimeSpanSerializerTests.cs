@@ -7,18 +7,8 @@ using NUnit.Framework;
 namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 {
     [TestFixture]
-    public class TimeSpanSerializerTests
+    public class TimeSpanSerializerTests : SerializerTestBase<TimeSpanSerializer>
     {
-        private TimeSpanSerializer serializer;
-        private SerializationContext context;
-
-        [SetUp]
-        public void SetUp()
-        {
-            serializer = new TimeSpanSerializer();
-            context = new SerializationContext(serializer, new CamelCasePropNameProvider());
-        }
-
         [Test]
         public void TimeSpand()
         {

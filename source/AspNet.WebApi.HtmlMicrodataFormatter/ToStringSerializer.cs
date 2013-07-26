@@ -9,6 +9,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
     {
         private readonly List<Type> supportedTypes;
 
+        public ToStringSerializer()
+            :this(new Type[0])
+        {
+        }
+
         public ToStringSerializer(params Type[] supportedTypes)
         {
             this.supportedTypes = supportedTypes.ToList();
