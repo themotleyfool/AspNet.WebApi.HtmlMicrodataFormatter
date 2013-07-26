@@ -12,6 +12,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
         }
 
+        public Link(string href, string body)
+            : this(new Dictionary<string, string> { { "href", href }}, body)
+        {
+        }
+
         public Link(IEnumerable<KeyValuePair<string, string>> attributes, string body)
         {
             this.attributes = attributes;

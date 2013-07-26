@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Net.Http;
+using NUnit.Framework;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 {
@@ -6,12 +7,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
     {
         protected T serializer;
         protected SerializationContext context;
+        protected HttpRequestMessage request;
 
         [SetUp]
         public void SetUp()
         {
             serializer = new T();
-            context = new SerializationContext(serializer, new CamelCasePropNameProvider());
+            request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/");
+            context = new SerializationContext(serializer, new CamelCasePropNameProvider(), request);
         }
     }
 }

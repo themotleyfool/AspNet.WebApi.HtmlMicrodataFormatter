@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Net.Http;
 using System.Xml.Linq;
 using NUnit.Framework;
 
@@ -11,11 +12,13 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
     public class HtmlMicrodataFormatterTests
     {
         private HtmlMicrodataFormatter formatter;
+        private HttpRequestMessage request;
 
         [SetUp]
         public void SetUp()
         {
             formatter = new HtmlMicrodataFormatter();
+            request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/");
         }
         
         public class CtrTests : HtmlMicrodataFormatterTests
@@ -66,7 +69,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             [Test]
             public void SerializeUriAsImg()
             {
-                var result = formatter.BuildBody(new Sample {Image = new Uri("http://example.com/favicon.ico")});
+                var result = formatter.BuildBody(new Sample {Image = new Uri("http://example.com/favicon.ico")}, request);
 
                 var actual = (XElement)result.Single();
 
@@ -78,7 +81,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             [Test]
             public void SerializeWithCustomItemType()
             {
-                var result = formatter.BuildBody(new Sample { Image = new Uri("http://example.com/favicon.ico") });
+                var result = formatter.BuildBody(new Sample { Image = new Uri("http://example.com/favicon.ico") }, request);
                 
                 var actual = result.OfType<XElement>().Single();
 
@@ -89,7 +92,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             public void RemoveSerializer()
             {
                 formatter.RemoveSerializer(formatter.DateTimeSerializer);
-                var result = formatter.BuildBody(new DateTime()).Single();
+                var result = formatter.BuildBody(new DateTime(), request).Single();
                 Assert.That(result.ToString(), Is.EqualTo("<span>1/1/0001 12:00:00 AM</span>"));
             }
         }
@@ -99,37 +102,37 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             [Test]
             public void String()
             {
-                AssertResultEquals(formatter.BuildBody("string"), "<span>string</span>");
+                AssertResultEquals(formatter.BuildBody("string", request), "<span>string</span>");
             }
 
             [Test]
             public void Int()
             {
-                AssertResultEquals(formatter.BuildBody(32), "<span>32</span>");
+                AssertResultEquals(formatter.BuildBody(32, request), "<span>32</span>");
             }
 
             [Test]
             public void Bool()
             {
-                AssertResultEquals(formatter.BuildBody(true), "<span>True</span>");
+                AssertResultEquals(formatter.BuildBody(true, request), "<span>True</span>");
             }
 
             [Test]
             public void Uri()
             {
-                AssertResultEquals(formatter.BuildBody(new Uri("http://example.com/some%20path")), "<a href=\"http://example.com/some%20path\">http://example.com/some path</a>");
+                AssertResultEquals(formatter.BuildBody(new Uri("http://example.com/some%20path"), request), "<a href=\"http://example.com/some%20path\">http://example.com/some path</a>");
             }
 
             [Test]
             public void Null()
             {
-                AssertResultEquals(formatter.BuildBody(null), "");
+                AssertResultEquals(formatter.BuildBody(null, request), "");
             }
 
             [Test]
             public void ArrayOfString()
             {
-                AssertResultEquals(formatter.BuildBody(new[] { "s1", "s2" }), "<span>s1</span>", "<span>s2</span>");
+                AssertResultEquals(formatter.BuildBody(new[] { "s1", "s2" }, request), "<span>s1</span>", "<span>s2</span>");
             }
 
             [Test]
@@ -148,7 +151,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
                             new XAttribute("itemprop", "name"),
                             new XText("Fred"))));
 
-                AssertResultEquals(formatter.BuildBody(expando), expected.ToString());
+                AssertResultEquals(formatter.BuildBody(expando, request), expected.ToString());
             }
             
             [Test]
@@ -158,7 +161,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 
                 expando.Names = new[] {"Fred", "Ted"};
 
-                var result = (XElement) Enumerable.Single(formatter.BuildBody(expando));
+                var result = (XElement) Enumerable.Single(formatter.BuildBody(expando, request));
 
                 Assert.That(result.Descendants().Count(e => e.Name == "dd"), Is.EqualTo(2));
             }

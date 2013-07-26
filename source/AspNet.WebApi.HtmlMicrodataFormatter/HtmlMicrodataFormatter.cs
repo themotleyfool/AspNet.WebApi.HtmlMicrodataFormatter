@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Xml.Linq;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
@@ -45,9 +46,9 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return true;
         }
 
-        public override IEnumerable<XObject> BuildBody(object value)
+        public override IEnumerable<XObject> BuildBody(object value, HttpRequestMessage request)
         {
-            var context = new SerializationContext {RootSerializer = this, PropNameProvider = PropNameProvider};
+            var context = new SerializationContext(this, PropNameProvider, request);
             return Serialize(null, value, context);
         }
 
