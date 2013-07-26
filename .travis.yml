@@ -1,10 +1,19 @@
 language: c
 env:
   global:
-    secure: tKsXchpRFpGKGcIyiXtV0xPlqaFHIMtAbcmAktYTwk1iGlSBHrFyOx/tSzPGdXMhlIW/pQulMZIeiNOWutt4BZE2i4w5iLNEoC3Gx0SwhJaNrpCLql/O+vaMo+nCejub52MEU40uquyAh33CGlqeLttrgCJ9awRwVsHL7DSlsqA=
+   - ARTIFACTS_AWS_REGION=us-east-1
+   - ARTIFACTS_S3_BUCKET=travis-ci-build-artifacts
+   - secure: KLTIPQhlx89k9TBrYnCRHO0R3oKqD/sFrxsFiajc53o5SE9Y6rjd4j4sTOMBemc67xeCb5xWoGkD9eKQBYRFJgD1zCDq52g/ggzM5QJD39dH15ZT2wsPHL528/zHnRz+MeQrWeCG7R/ioTqUiDVL7aNhsBKY9cTY8Ja2tWkMk78=
+   - secure: ieIxDN9yt6lHU40pb9gqpFxpqp8JO99NfgPU3wElgKMW/DjYyX04PNKz3gjeFCvsHtH/0rWTjWBKn0mgaekLVm75ezfQJxFMVJS6x7eURqenAPaVAZnRO16EsgwkfRKcGJST0uVDgh9kd8L1zWkvFhD74wCsRz7i7Io4dJ9zHyk=
+
 install:
-- sudo sh -c 'echo deb http://ppa.launchpad.net/borgdylan/ppa/ubuntu precise main >> /etc/apt/sources.list'
-- sudo apt-get update
-- sudo apt-get -q -y --force-yes install cmake mono-devel mono-gmcs mono-xbuild nunit-console
+ - sudo sh -c 'echo deb http://ppa.launchpad.net/borgdylan/ppa/ubuntu precise main >> /etc/apt/sources.list'
+ - sudo apt-get update
+ - sudo apt-get -q -y --force-yes install cmake mono-devel mono-gmcs mono-xbuild nunit-console
+ - gem install travis-artifacts
+
 script:
-- xbuild /p:TestsEnabled=false
+ - xbuild /p:TestsEnabled=false
+
+after_success:
+ - travis-artifacts upload --path build/artifacts --target-path AspNet.WebApi.HtmlMicrodataFormatter

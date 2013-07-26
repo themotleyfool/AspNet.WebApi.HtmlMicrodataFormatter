@@ -23,8 +23,6 @@
 		<AssemblyInformationalVersion>$(PackageVersion) $(VersionControlInfo)</AssemblyInformationalVersion>
 
 		<TestsEnabled>true</TestsEnabled>
-
-		<NuGetPublishUrl Condition=" '$(TRAVIS)' == 'true' ">https://staging.nuget.org/</NuGetPublishUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -45,13 +43,14 @@
 	</Target>
 
 	<Target Name="Package">
-		<Exec Command="$(NuGetCommand) pack -o $(MSBuildProjectDirectory)/build -Properties Configuration=Release -Version &quot;$(PackageVersion)&quot; -Symbols"
+		<MakeDir Directories="build/artifacts"/>
+		<Exec Command="$(NuGetCommand) pack -o $(MSBuildProjectDirectory)/build/artifacts -Properties Configuration=Release -Version &quot;$(PackageVersion)&quot; -Symbols"
 			WorkingDirectory="source"/>
 	</Target>
 
   <Target Name="Publish" DependsOnTargets="SetNuGetApiKey" Condition=" '$(NuGetPublishUrl)' != '' ">
 	<Exec Command="$(NuGetCommand) push &quot;AspNet.WebApi.HtmlMicrodataFormatter.$(PackageVersion).nupkg&quot; -Source &quot;$(NuGetPublishUrl)&quot; -ConfigFile nuget.config"
-			WorkingDirectory="build"/>
+			WorkingDirectory="build/artifacts"/>
   </Target>
 
   <Target Name="GenerateVersionInfo">
