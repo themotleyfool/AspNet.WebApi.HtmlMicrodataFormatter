@@ -70,6 +70,19 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             Assert.That(elem.ToString(), Is.EqualTo(expected.ToString()));
         }
 
+        [Test]
+        public void MetaProperty()
+        {
+            EntityHandler<Entity> handler = (e, _) => new[] {new XElement("blockquote", new XText(e.Name))};
+
+            serializer.Property("NoSuch", handler);
+
+            var result = (XElement)serializer.Serialize(null, entity, context).Single();
+            var elem = result.Descendants().Single(e => e.Name == "blockquote");
+
+            Assert.That(elem.ToString(), Is.EqualTo("<blockquote>enty</blockquote>"));
+        }
+
         private IEnumerable<XObject> RenderEntity(Entity e, SerializationContext context)
         {
             yield return new XElement("section", new XAttribute("itemprop", "content"), new XText(e.Name));

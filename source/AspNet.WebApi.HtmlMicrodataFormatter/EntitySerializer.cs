@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml.Linq;
@@ -41,11 +42,30 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             entityHandlers.Add(info.Name, entityHandler);
         }
 
+        public void Property<TProperty>(string propertyName, PropertyHandler<TProperty> propertyHandler)
+        {
+            propertyHandlers.Add(propertyName, propertyHandler);
+        }
+
         public void Property(string propertyName, EntityHandler<T> entityHandler)
         {
             entityHandlers.Add(propertyName, entityHandler);
         }
-        
+
+
+        protected internal override IEnumerable<KeyValuePair<string, object>> Reflect(object value)
+        {
+            var dic = base.Reflect(value).ToDictionary(kv => kv.Key, kv => kv.Value);
+
+            var missing = entityHandlers.Keys.Union(propertyHandlers.Keys).Except(dic.Keys);
+
+            foreach (var k in missing)
+            {
+                dic.Add(k, null);
+            }
+
+            return dic;
+        }
         protected internal override IEnumerable<XObject> BuildPropertyValue(object entity, string propertyName, object propertyValue, SerializationContext context)
         {
             Delegate handler;
