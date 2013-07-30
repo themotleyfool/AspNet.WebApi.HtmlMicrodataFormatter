@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AspNet.WebApi.HtmlMicrodataFormatter.WebActivator</id>
+    <title>HtmlMicrodataFormatter WebActivator</title>
+    <version>$version$</version>
+    <authors>Chris Eldredge</authors>
+    <projectUrl>https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter</projectUrl>
+    <licenseUrl>https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter/blob/master/LICENSE.txt</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Uses WebActivator to automatically configure HtmlMicrodataFormatter.</description>
+    <releaseNotes>See https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter/releases</releaseNotes>
+    <copyright>Copyright 2013 The Motley Fool LLC</copyright>
+    <tags>microdata rest webapi HATEOAS HtmlMicrodataFormatter</tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.WebApi.WebHost" version="[4.0, 5.0)" />
+      <dependency id="Microsoft.Net.Http" version="[2.0, 3.0)" />
+      <dependency id="WebActivator" version="[1.5.3, 2.0)" />
+      <dependency id="AspNet.WebApi.HtmlMicrodataFormatter" version="$version$" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="HtmlMicrodataFormatterActivator.cs.pp" target="content/App_Start"/>
+  </files>
+</package>

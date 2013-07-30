@@ -6,9 +6,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.WebApi.HtmlMicrodata
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FC23E61A-724D-40C6-B5EB-1ADEEB16E3BD}"
 	ProjectSection(SolutionItems) = preProject
+		AspNet.WebApi.HtmlMicrodataFormatter.WebActivator\AspNet.WebApi.HtmlMicrodataFormatter.WebActivator.nuspec = AspNet.WebApi.HtmlMicrodataFormatter.WebActivator\AspNet.WebApi.HtmlMicrodataFormatter.WebActivator.nuspec
 		HtmlMicrodataFormatter.nuspec = HtmlMicrodataFormatter.nuspec
 		..\IntegratedBuild.proj = ..\IntegratedBuild.proj
 		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebActivator", "WebActivator", "{9B260B93-8A0B-4E90-BFAD-4DA03E16B276}"
+	ProjectSection(SolutionItems) = preProject
+		AspNet.WebApi.HtmlMicrodataFormatter.WebActivator\AspNet.WebApi.HtmlMicrodataFormatter.WebActivator.nuspec = AspNet.WebApi.HtmlMicrodataFormatter.WebActivator\AspNet.WebApi.HtmlMicrodataFormatter.WebActivator.nuspec
+		AspNet.WebApi.HtmlMicrodataFormatter.WebActivator\HtmlMicrodataFormatterActivator.cs.pp = AspNet.WebApi.HtmlMicrodataFormatter.WebActivator\HtmlMicrodataFormatterActivator.cs.pp
 	EndProjectSection
 EndProject
 Global
@@ -27,5 +34,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9B260B93-8A0B-4E90-BFAD-4DA03E16B276} = {FC23E61A-724D-40C6-B5EB-1ADEEB16E3BD}
 	EndGlobalSection
 EndGlobal

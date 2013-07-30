@@ -46,6 +46,8 @@
 		<MakeDir Directories="build/artifacts"/>
 		<Exec Command="$(NuGetCommand) pack -o $(MSBuildProjectDirectory)/build/artifacts -Properties Configuration=Release -Version &quot;$(PackageVersion)&quot; -Symbols"
 			WorkingDirectory="source"/>
+		<Exec Command="$(NuGetCommand) pack -o $(MSBuildProjectDirectory)/build/artifacts -Properties Configuration=Release -Version &quot;$(PackageVersion)&quot; -Symbols"
+			WorkingDirectory="source/AspNet.WebApi.HtmlMicrodataFormatter.WebActivator"/>
 	</Target>
 
   <Target Name="Publish" DependsOnTargets="SetNuGetApiKey" Condition=" '$(NuGetPublishUrl)' != '' ">

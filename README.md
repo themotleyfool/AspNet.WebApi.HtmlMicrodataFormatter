@@ -210,4 +210,3 @@ convert them to camel case.
 - Add more custom input types (checkbox, textarea, select, file, etc)
 - Transform `<param/>` and `<returns/>` elements
 - Microdata compatible schema from type documentation
-- WebActivator project to auto-configure
