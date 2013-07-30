@@ -50,17 +50,17 @@
 			WorkingDirectory="source/AspNet.WebApi.HtmlMicrodataFormatter.WebActivator"/>
 	</Target>
 
-  <Target Name="Publish" DependsOnTargets="SetNuGetApiKey" Condition=" '$(NuGetPublishUrl)' != '' ">
-	<Exec Command="$(NuGetCommand) push &quot;AspNet.WebApi.HtmlMicrodataFormatter.$(PackageVersion).nupkg&quot; -Source &quot;$(NuGetPublishUrl)&quot; -ConfigFile nuget.config"
-			WorkingDirectory="build/artifacts"/>
-  </Target>
+	<Target Name="Publish" Condition=" '$(NuGetPublishUrl)' != '' ">
+		<Exec Command="$(NuGetCommand) push &quot;AspNet.WebApi.HtmlMicrodataFormatter.$(PackageVersion).nupkg&quot; -Source &quot;$(NuGetPublishUrl)&quot; -ConfigFile nuget.config" WorkingDirectory="build/artifacts"/>
+	</Target>
 
-  <Target Name="GenerateVersionInfo">
-		<MakeDir Directories="build"/>
+	<Target Name="GenerateVersionInfo">
+		<MakeDir Directories="build/artifacts"/>
 		<WriteLinesToFile File="build/VersionInfo.cs" Lines="@(VersionInfoContent)" Overwrite="true"/>
 		<Message Text="PackageVersion: $(PackageVersion)"/>
 		<Message Text="AssemblyVersion: $(AssemblyVersion)"/>
 		<Message Text="AssemblyInformationalVersion: $(AssemblyInformationalVersion)"/>
+		<Copy SourceFiles="build/VersionInfo.cs" DestinationFiles="build/artifacts/VersionInfo-$(BuildNumber).cs"/>
 	</Target>
 
 	<Target Name="SetNuGetApiKey" Condition=" '$(NUGET_API_KEY)' != '' ">
