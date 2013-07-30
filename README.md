@@ -11,28 +11,24 @@ actions and the parameters they accept.
 Using this library enables clients that follow HATEOAS (Hypermedia as the Engine of Application State)
 conventions that prevent tight coupling, magic URLs and brittle formatting.
 
-## Available on NuGet Gallery
-
-To install the [AspNet.WebApi.HtmlMicrodataFormatter package](http://nuget.org/packages/AspNet.WebApi.HtmlMicrodataFormatter),
-run the following command in the [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console)
-
-    PM> Install-Package AspNet.WebApi.HtmlMicrodataFormatter
-
 ## Example
 
 Given this code:
 
 ```c#
-public class TodoController : ApiController
+namespace SampleNamespace
 {
-    public Todo Get(int id)
+    public class TodoController : ApiController
     {
-        return new Todo
-            {
-                Name = "Finish this app",
-                Description = "It'll take 6 to 8 weeks.",
-                Due = DateTime.Now.AddDays(7*6)
-            };
+        public Todo Get(int id)
+        {
+            return new Todo
+                {
+                    Name = "Finish this app",
+                    Description = "It'll take 6 to 8 weeks.",
+                    Due = DateTime.Now.AddDays(7*6)
+                };
+        }
     }
 
     public class Todo
@@ -49,7 +45,7 @@ The following markup is rendered:
 ```html
 <html>
     <body>
-        <dl itemtype="http://schema.org/Thing" itemscope="itemscope">
+        <dl itemtype="http://example.com/api/doc/SampleNamespace.Todo" itemscope="itemscope">
             <dt>Name</dt>
             <dd><span itemprop="name">Finish this app</span></dd>
             <dt>Description</dt>
@@ -61,7 +57,7 @@ The following markup is rendered:
 </html>
 ```
 
-When DocumentationController is configured (see below), the following markup is rendered:
+When DocumentationController is configured, the following markup is rendered:
 
 ```html
 <section class="api-group" id="Todo">
@@ -80,69 +76,23 @@ When DocumentationController is configured (see below), the following markup is 
 </section>
 ```
 
+## Available on NuGet Gallery
+
+To install the [AspNet.WebApi.HtmlMicrodataFormatter package](http://nuget.org/packages/AspNet.WebApi.HtmlMicrodataFormatter),
+run the following command in the [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console)
+
+    PM> Install-Package AspNet.WebApi.HtmlMicrodataFormatter.WebActivator
+
+The above package depends on WebActivator and will drop a file in your App_Start folder.
+If you do not want to use WebActivator you can install just the library.
+
+    PM> Install-Package AspNet.WebApi.HtmlMicrodataFormatter
+
 ## Configuring HtmlMicrodataFormatter
 
-This sample configures a project to respond to client requests that ask for
-text/html or application/xhtml+xml (or text/xml or application/xml) with
-html5 microdata documents.
-
-```c#
-public static class WebApiConfig
-{
-    public static void Register(HttpConfiguration config)
-    {
-        // optional: remove XmlFormatter to serve text/xml and application/xml requests with HtmlMicrodataFormatter
-        config.Formatters.Remove(config.Formatters.XmlFormatter);
-
-        config.Formatters.Add(CreateHtmlMicrodataFormatter());
-    }
-
-    private static MediaTypeFormatter CreateHtmlMicrodataFormatter()
-    {
-        var formatter = new HtmlMicrodataFormatter();
-
-        // optional: insert css and javascript
-        formatter.AddHeadContent(new XElement("title", "My WebApi Project")
-        formatter.AddHeadContent(new XElement("link",
-                      new XAttribute("rel", "stylesheet"),
-                      new XAttribute("href", "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css")));
-
-        // optional: custom serializers can control how a specific Type is rendered as html:
-        formatter.RegisterSerializer(new ToStringSerializer(typeof (Version)));
-
-        return formatter;
-    }
-}
-```
-
-## Configuring DocumentationController
-
-This sample configures the documentation controller which generates
-html5 forms and links to registered routes including inputs for
-parameters.
-
-```c#
-public static class WebApiConfig
-{
-    public static void Register(HttpConfiguration config)
-        var documentation = new HtmlDocumentation();
-        documentation.Load();
-
-        config.Services.Replace(typeof(IDocumentationProvider), new WebApiHtmlDocumentationProvider(documentation));
-    }
-
-    public static void MapApiRoutes(HttpConfiguration config)
-    {
-        config.Routes.MapHttpRoute("RouteNames.Documentation",
-                            "api",
-                            new { controller = "Documentation" });
-    }
-}
-```
-
-The `HtmlDocumentation.Load` method will look for assembly documentation xml files in the
-private bin path of the application and load them to show controller and action documentation
-alongside form elements.
+If you are not using the WebActivator package, see
+[HtmlMicrodataFormatterActivator.cs](source/AspNet.WebApi.HtmlMicrodataFormatter.WebActivator/HtmlMicrodataFormatterActivator.cs.pp)
+for examples of how to configure your project.
 
 ## Links
 
