@@ -7,9 +7,15 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
     public interface IDocumentationProviderEx : IDocumentationProvider
     {
         /// <summary>
-        /// Gets documentation provided for a type enclosing a given method.
+        /// Gets documentation provided for a type.
         /// </summary>
         string GetDocumentation(Type type);
+
+        /// <summary>
+        /// Gets documentation provided for a type name that includes the namespace
+        /// but not the assembly name, similar to <see cref="Type.FullName"/>.
+        /// </summary>
+        string GetDocumentation(string fullTypeName);
     }
 
     /// <summary>
@@ -27,7 +33,12 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public string GetDocumentation(Type type)
         {
-            return documentation.GetTypeDocumentation(type);
+            return GetDocumentation(type.FullName);
+        }
+
+        public string GetDocumentation(string fullTypeName)
+        {
+            return documentation.GetTypeDocumentation(fullTypeName);
         }
 
         public string GetDocumentation(HttpActionDescriptor actionDescriptor)

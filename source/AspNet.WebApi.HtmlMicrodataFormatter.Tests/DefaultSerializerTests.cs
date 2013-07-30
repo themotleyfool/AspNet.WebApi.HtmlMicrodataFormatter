@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Web.Http;
 using System.Xml.Linq;
 using NUnit.Framework;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 {
     [TestFixture]
-    public class DefaultSerializerTests : SerializerTestBase<DefaultSerializer>
+    public class DefaultSerializerTests : SerializerTestBase<TestableDefaultSerializer>
     {
         public class BuildPropertiesTests : DefaultSerializerTests
         {
@@ -70,6 +72,52 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 
                 Assert.That(result, Is.EquivalentTo(new Dictionary<string, object> { { "MyField", "world" } }));
             }
+        }
+
+        public class ItemTypeTests : DefaultSerializerTests
+        {
+            [Test]
+            public void DefaultsToThing()
+            {
+                var result = serializer.GetItemType(typeof (string), context);
+
+                Assert.That(result, Is.EqualTo("http://schema.org/Thing"));
+            }
+
+            [Test]
+            public void UsesTypeDocumentationWhenAvailable()
+            {
+                configuration.Routes.MapHttpRoute(
+                    RouteNames.TypeDocumentation, 
+                    "schema/{typeName}",
+                    new {controller = "Documentation", action = "GetTypeDocumentation"});
+
+                var result = serializer.GetItemType(typeof(string), context);
+
+                Assert.That(result, Is.EqualTo("http://localhost/schema/" + typeof(string).FullName));
+            }
+
+            [Test]
+            public void FallsBackWhenRouteMisconfigured()
+            {
+                configuration.Routes.MapHttpRoute(
+                    RouteNames.TypeDocumentation,
+                    "schema/{secretParameter}",
+                    new { controller = "Documentation", action = "GetTypeDocumentation" });
+
+                var result = serializer.GetItemType(typeof(string), context);
+
+                Assert.That(result, Is.EqualTo("http://schema.org/Thing"));
+            }
+        }
+
+    }
+
+    public class TestableDefaultSerializer : DefaultSerializer
+    {
+        public new string GetItemType(Type type, SerializationContext context)
+        {
+            return base.GetItemType(type, context);
         }
     }
 }

@@ -40,9 +40,9 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             }
         }
 
-        public string GetTypeDocumentation(Type type)
+        public string GetTypeDocumentation(string fullTypeName)
         {
-            return GetNodeText(MemberXPathExpression, "T:" + type.FullName);
+            return GetNodeText(MemberXPathExpression, "T:" + fullTypeName);
         }
 
         public string GetMethodDocumentation(MethodInfo method)

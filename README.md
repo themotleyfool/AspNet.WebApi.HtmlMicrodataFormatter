@@ -209,5 +209,5 @@ convert them to camel case.
 - Ability to provide top-level documentation
 - Add more custom input types (checkbox, textarea, select, file, etc)
 - Transform `<param/>` and `<returns/>` elements
-- Dynamic c# client
 - Microdata compatible schema from type documentation
+- WebActivator project to auto-configure

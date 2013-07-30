@@ -50,7 +50,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return new XElement("section", children);
         }
 
-        protected IEnumerable<XElement> ParseDocumentation(string html)
+        public static IEnumerable<XElement> ParseDocumentation(string html)
         {
             return XElement.Parse("<r>" + html + "</r>").Elements();
         }

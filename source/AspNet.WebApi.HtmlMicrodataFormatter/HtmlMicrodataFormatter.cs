@@ -17,6 +17,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public readonly ToStringSerializer ToStringSerializer = new ToStringSerializer();
         public readonly ApiDocumentationSerializer ApiDocumentationSerializer = new ApiDocumentationSerializer();
         public readonly ApiDescriptionSerializer ApiDescriptionSerializer = new ApiDescriptionSerializer();
+        public readonly TypeDocumentationSerializer TypeDocumentationSerializer = new TypeDocumentationSerializer();
 
         public HtmlMicrodataFormatter()
         {
@@ -27,6 +28,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             serializerRegistry.Register(ToStringSerializer);
             serializerRegistry.Register(ApiDocumentationSerializer);
             serializerRegistry.Register(ApiDescriptionSerializer);
+            serializerRegistry.Register(TypeDocumentationSerializer);
 
             PropNameProvider = new CamelCasePropNameProvider();
         }

@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Web.Http.Routing;
 using System.Xml.Linq;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
@@ -40,7 +42,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             }
 
             var dataList = new XElement("dl",
-                                      new XAttribute("itemtype", GetItemType(obj.GetType())),
+                                      new XAttribute("itemtype", GetItemType(obj.GetType(), context)),
                                       new XAttribute("itemscope", "itemscope"),
                                       BuildProperties(obj, context));
 
@@ -56,9 +58,21 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             element.SetAttributeValue("itemprop", context.PropNameProvider.GetItemProp(propertyName));
         }
 
-        protected virtual string GetItemType(Type type)
+        protected virtual string GetItemType(Type type, SerializationContext context)
         {
-            return "http://schema.org/Thing";
+            var request = context.Request;
+            string result = null;
+            if (TypeDocumentationRouteAvailable(request))
+            {
+                result = new UrlHelper(request).Link(RouteNames.TypeDocumentation, new { typeName = type.FullName });        
+            }
+
+            return result ?? "http://schema.org/Thing";
+        }
+
+        private static bool TypeDocumentationRouteAvailable(HttpRequestMessage request)
+        {
+            return request.GetConfiguration().Routes.ContainsKey(RouteNames.TypeDocumentation);
         }
 
         protected internal virtual IEnumerable<XObject> BuildProperties(object obj, SerializationContext context)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
@@ -28,7 +30,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             }
         }
 
-        public virtual SimpleApiDocumentation GetDocumentation()
+        public virtual SimpleApiDocumentation GetApiDocumentation()
         {
             var apiExplorer = Configuration.Services.GetApiExplorer();
 
@@ -43,6 +45,17 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             }
 
             return documentation;
+        }
+
+        public virtual object GetTypeDocumentation(string typeName)
+        {
+            var documentation = DocumentationProvider.GetDocumentation(typeName);
+            if (string.IsNullOrWhiteSpace(documentation))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Documentation for the type '" + typeName + "' was not found.");
+            }
+
+            return new SimpleTypeDocumentation {Name = typeName, Documentation = documentation};
         }
     }
 }

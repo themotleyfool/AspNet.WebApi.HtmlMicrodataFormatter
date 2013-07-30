@@ -24,9 +24,9 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public string ItemType { get; set; }
 
-        protected override string GetItemType(Type type)
+        protected override string GetItemType(Type type, SerializationContext context)
         {
-            return ItemType ?? base.GetItemType(type);
+            return ItemType ?? base.GetItemType(type, context);
         }
 
         public void Property<TProperty>(Expression<Func<T, TProperty>> expression, PropertyHandler<TProperty> propertyHandler)

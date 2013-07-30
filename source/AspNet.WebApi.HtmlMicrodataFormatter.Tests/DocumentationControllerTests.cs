@@ -78,7 +78,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             explorer.ApiDescriptions.Add(apiDescription);
             provider.Setup(p => p.GetDocumentation(controllerType)).Returns(docsForController);
 
-            var result = controller.GetDocumentation();
+            var result = controller.GetApiDocumentation();
 
             Assert.That(result.Resources.Single().Documentation, Is.EqualTo(docsForController));
         }

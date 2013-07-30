@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Net.Http;
+using System.Web.Http;
+using System.Web.Http.Hosting;
 using System.Xml.Linq;
 using NUnit.Framework;
 
@@ -13,12 +15,15 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
     {
         private HtmlMicrodataFormatter formatter;
         private HttpRequestMessage request;
+        private HttpConfiguration configuration;
 
         [SetUp]
         public void SetUp()
         {
             formatter = new HtmlMicrodataFormatter();
             request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/");
+            configuration = new HttpConfiguration(new HttpRouteCollection("/"));
+            request.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, configuration);
         }
         
         public class CtrTests : HtmlMicrodataFormatterTests
@@ -44,7 +49,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
                     get { return new[] {typeof (Sample)}; }
                 }
 
-                protected override string GetItemType(Type type)
+                protected override string GetItemType(Type type, SerializationContext context)
                 {
                     return "http://example.com/schema/MyCustomThing";
                 }
@@ -173,7 +178,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 
                 expando.Names = new[] { "Fred", "Ted" };
 
-                var result = (XElement)Enumerable.Single(formatter.Serialize("PropName", expando, new SerializationContext { RootSerializer = formatter, PropNameProvider = new CamelCasePropNameProvider()}));
+                var context = new SerializationContext {RootSerializer = formatter, PropNameProvider = new CamelCasePropNameProvider(), Request = request};
+                var result = (XElement)Enumerable.Single(formatter.Serialize("PropName", expando, context));
 
                 Assert.That(result.Attribute("itemprop"), Is.Not.Null, "Should set itemprop attribute on <dl>");
                 Assert.That(result.Attribute("itemprop").Value, Is.EqualTo("propName"));
