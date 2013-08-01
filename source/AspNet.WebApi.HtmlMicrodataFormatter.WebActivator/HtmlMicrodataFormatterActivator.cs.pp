@@ -16,7 +16,8 @@ namespace $rootnamespace$.App_Start
     {
         public static void ConfigureHtmlMicrodataFormatter()
         {
-            GlobalConfiguration.Configuration.Formatters.Insert(0, CreateHtmlMicrodataFormatter());
+            var config = GlobalConfiguration.Configuration;
+            config.Formatters.Insert(0, CreateHtmlMicrodataFormatter(config));
         }
         
         public static void ConfigureDocumentationProvider()
@@ -32,7 +33,7 @@ namespace $rootnamespace$.App_Start
             MapDocumentationRoutes(routes);
         }
 
-        private static MediaTypeFormatter CreateHtmlMicrodataFormatter()
+        private static MediaTypeFormatter CreateHtmlMicrodataFormatter(HttpConfiguration config)
         {
             var formatter = new HtmlMicrodataFormatter();
 
@@ -41,11 +42,19 @@ namespace $rootnamespace$.App_Start
 			//formatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xml"));
 
             // optional: insert css and javascript
+            const string bootstrapUrl = "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css";
+            const string formTemplateRelativeUrl = "/Scripts/formtemplate.min.js";
+            var formTemplateUrl = (config.VirtualPathRoot.Length == 1 ? "" : config.VirtualPathRoot) + formTemplateRelativeUrl;
+            
             formatter.AddHeadContent(new XElement("title", "$AssemblyName$"));
-            formatter.AddHeadContent(new XElement("link",
-                                                  new XAttribute("rel", "stylesheet"),
-                                                  new XAttribute("href",
-                                                                 "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css")));
+            formatter.AddHeadContent(
+				new XElement("link",
+                             new XAttribute("rel", "stylesheet"),
+                             new XAttribute("href", bootstrapUrl)));
+             formatter.AddHeadContent(
+				new XElement("script",
+                             new XAttribute("src",  formTemplateUrl),
+                             new XText("")));
 
             // optional: addd custom serializers to control how a specific Type is rendered as html:
             //formatter.RegisterSerializer(new ToStringSerializer(typeof (Version)));

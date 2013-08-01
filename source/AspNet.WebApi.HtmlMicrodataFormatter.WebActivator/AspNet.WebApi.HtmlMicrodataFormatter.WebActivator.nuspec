@@ -25,5 +25,6 @@
   </metadata>
   <files>
     <file src="HtmlMicrodataFormatterActivator.cs.pp" target="content/App_Start"/>
+    <file src="formtemplate.min.js" target="content/Scripts"/>
   </files>
 </package>
