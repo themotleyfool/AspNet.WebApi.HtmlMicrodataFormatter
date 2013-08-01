@@ -23,9 +23,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         protected HtmlMediaTypeFormatter()
         {
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
-            SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/xml"));
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xhtml+xml"));
-            SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xml"));
             Settings = new XmlWriterSettings();
             Settings.OmitXmlDeclaration = true;
         }

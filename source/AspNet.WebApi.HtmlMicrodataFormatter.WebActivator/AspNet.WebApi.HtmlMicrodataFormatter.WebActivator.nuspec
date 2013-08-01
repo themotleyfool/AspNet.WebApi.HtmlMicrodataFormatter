@@ -8,7 +8,11 @@
     <projectUrl>https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter</projectUrl>
     <licenseUrl>https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter/blob/master/LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Uses WebActivator to automatically configure HtmlMicrodataFormatter.</description>
+    <description>
+      Uses WebActivator to automatically configure HtmlMicrodataFormatter.
+
+      See the project page for more information and examples.
+    </description>
     <releaseNotes>See https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter/releases</releaseNotes>
     <copyright>Copyright 2013 The Motley Fool LLC</copyright>
     <tags>microdata rest webapi HATEOAS HtmlMicrodataFormatter</tags>

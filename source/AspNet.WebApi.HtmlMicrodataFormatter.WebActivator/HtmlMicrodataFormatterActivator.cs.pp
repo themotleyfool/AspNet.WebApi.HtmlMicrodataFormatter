@@ -36,6 +36,10 @@ namespace $rootnamespace$.App_Start
         {
             var formatter = new HtmlMicrodataFormatter();
 
+			// optional: use HtmlMicrodataFormatter for clients that request xml
+			//formatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/xml"));
+			//formatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xml"));
+
             // optional: insert css and javascript
             formatter.AddHeadContent(new XElement("title", "$AssemblyName$"));
             formatter.AddHeadContent(new XElement("link",
