@@ -61,13 +61,7 @@
 		<Message Text="AssemblyVersion: $(AssemblyVersion)"/>
 		<Message Text="AssemblyInformationalVersion: $(AssemblyInformationalVersion)"/>
 		<Copy SourceFiles="build/VersionInfo.cs" DestinationFiles="build/artifacts/VersionInfo-$(BuildNumber).cs"/>
-	</Target>
-
-	<Target Name="SetNuGetApiKey" Condition=" '$(NUGET_API_KEY)' != '' ">
-		<!-- Set the api key without nuget.exe gleefully announcing what the secret key is -->
-		<WriteLinesToFile File="build/set-api-key.sh" Lines="$(NuGetCommand) setApiKey &quot;$(NUGET_API_KEY)&quot; -Source &quot;$(NuGetPublishUrl)&quot; -NonInteractive -ConfigFile nuget.config >/dev/null 2>/dev/null" Overwrite="true"/>
-		<Exec Command="sh set-api-key.sh" WorkingDirectory="build"/>
-		<Delete Files="build/set-api-key.sh"/>
+		<Message Text="To repeat this build: git checkout $(TRAVIS_COMMIT); msbuild /p:TRAVIS=true,TRAVIS_COMMIT=$(TRAVIS_COMMIT),TRAVIS_BRANCH=$(TRAVIS_BRANCH),TRAVIS_BUILD_NUMBER=$(TRAVIS_BUILD_NUMBER)"/>
 	</Target>
 
 	<Import Project="source/.nuget/nuget.targets"/>
