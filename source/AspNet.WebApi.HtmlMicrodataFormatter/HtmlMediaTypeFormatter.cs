@@ -24,8 +24,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xhtml+xml"));
-            Settings = new XmlWriterSettings();
-            Settings.OmitXmlDeclaration = true;
+            Settings = new XmlWriterSettings {OmitXmlDeclaration = true};
         }
 
         public override bool CanReadType(Type type)
@@ -45,8 +44,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         }
 
         public XmlWriterSettings Settings { get; set; }
-
-
+        
         public abstract IEnumerable<XObject> BuildBody(object value, HttpRequestMessage request);
 
         public virtual void AddHeadContent(XObject content)
@@ -107,7 +105,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 // le sigh
                 buffer.Replace("<!DOCTYPE html >", "<!DOCTYPE html>");
 
-                using (var writer = new StreamWriter(writeStream, Encoding.UTF8))
+                using (var writer = new StreamWriter(writeStream, new UTF8Encoding(encoderShouldEmitUTF8Identifier:false)))
                 {
                     await writer.WriteAsync(buffer.ToString());
                     await writer.FlushAsync();
