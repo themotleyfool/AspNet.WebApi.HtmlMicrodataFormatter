@@ -68,6 +68,7 @@
     <Compile Include="ApiDescriptionSerializer.cs" />
     <Compile Include="HttpConfigurationExtensions.cs" />
     <Compile Include="Link.cs" />
+    <Compile Include="LinkExtensions.cs" />
     <Compile Include="RouteNames.cs" />
     <Compile Include="SimpleApiDocumentation.cs" />
     <Compile Include="ApiDocumentationSerializer.cs" />

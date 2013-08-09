@@ -17,7 +17,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
             var element = new XElement("a",
                 link.Attributes.Select(attr => new XAttribute(attr.Key, attr.Value)),
-                new XText(link.Body));
+                new XText(link.Text));
 
             SetPropertyName(element, propertyName, context);
 

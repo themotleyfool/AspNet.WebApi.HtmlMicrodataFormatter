@@ -23,11 +23,12 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public SimpleApiDescription()
         {
+            this.Parameters = Enumerable.Empty<SimpleApiParameterDescriptor>();
         }
 
-        public SimpleApiDescription(HttpRequestMessage request, string name, string relativePath)
+        public SimpleApiDescription(HttpRequestMessage request, string name, string appRelativePath)
         {
-            this.Href = request.GetConfiguration().MapPath(relativePath);
+            this.Href = request.GetConfiguration().MapPath(appRelativePath);
             this.Name = name;
             this.Method = "GET";
             this.Parameters = Enumerable.Empty<SimpleApiParameterDescriptor>();
