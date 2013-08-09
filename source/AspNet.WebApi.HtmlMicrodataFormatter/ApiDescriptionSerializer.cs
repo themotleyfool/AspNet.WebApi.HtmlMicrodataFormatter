@@ -33,11 +33,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             if (api.Parameters.Any() || !string.Equals(api.Method, "get", StringComparison.InvariantCultureIgnoreCase))
             {
                 children.Add(
-                    new XElement("form",
-                                 new XAttribute("action", api.Href),
-                                 new XAttribute("method", api.Method),
-                                 new XAttribute("data-templated", api.Templated),
-                                 BuildFormInputs(api)));
+                    BuildForm(api));
             }
             else
             {
@@ -50,12 +46,23 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return new XElement("section", children);
         }
 
+        public XElement BuildForm(SimpleApiDescription api)
+        {
+            return new XElement("form",
+                                new XAttribute("name", api.Name),
+                                new XAttribute("action", api.Href),
+                                new XAttribute("method", api.Method),
+                                new XAttribute("data-templated", api.Templated),
+                                new XAttribute("data-rel", api.Name),
+                                BuildFormInputs(api));
+        }
+
         public static IEnumerable<XElement> ParseDocumentation(string html)
         {
             return XElement.Parse("<r>" + html + "</r>").Elements();
         }
 
-        private IEnumerable<XNode> BuildFormInputs(SimpleApiDescription api)
+        public IEnumerable<XNode> BuildFormInputs(SimpleApiDescription api)
         {
             foreach (var p in api.Parameters)
             {

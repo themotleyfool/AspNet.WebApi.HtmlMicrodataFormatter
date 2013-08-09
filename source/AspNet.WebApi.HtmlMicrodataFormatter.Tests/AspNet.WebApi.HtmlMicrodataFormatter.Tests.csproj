@@ -71,6 +71,7 @@
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
     <Compile Include="ApiDescriptionExtensionTests.cs" />
+    <Compile Include="ApiDescriptionSerializerTests.cs" />
     <Compile Include="ApiDocumentationTests.cs" />
     <Compile Include="DateTimeSerializerTests.cs" />
     <Compile Include="DefaultSerializerTests.cs" />
