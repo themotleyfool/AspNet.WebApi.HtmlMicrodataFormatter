@@ -31,7 +31,16 @@
 		<VersionInfoContent Include="[assembly: global::System.Reflection.AssemblyInformationalVersionAttribute(&quot;$(AssemblyInformationalVersion)&quot;)]"/>
 	</ItemGroup>
 
-	<Target Name="Build" DependsOnTargets="GenerateVersionInfo;Compile;Test;Package;Publish"/>
+	<Target Name="Build" DependsOnTargets="Clean;GenerateVersionInfo;Compile;Test;Package;Publish"/>
+
+	<Target Name="Clean">
+		<ItemGroup>
+			<Trash Include="build\**\*" />
+			<Trash Include="source\*\bin\**\*" />
+			<Trash Include="source\*\obj\**\*" />
+		</ItemGroup>
+		<Delete Files="@(Trash)"/>
+	</Target>
 
 	<Target Name="Compile">
 		<MSBuild Projects="source/HtmlMicrodataFormatter.sln" Targets="Build" Properties="Configuration=Debug;RestorePackages=true;PackageSources=http://nuget.org/api/v2"/>

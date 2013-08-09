@@ -64,8 +64,8 @@ When DocumentationController is configured, the following markup is rendered:
     <header><h1>Todo</h1></header>
     <section class="api">
         <h2>Get</h2>
-        <p>GET /api/todo/get</p>
-        <form action="/api/todo/get" method="GET" data-templated="false">
+        <p>GET /api/todo</p>
+        <form action="/api/todo" method="GET" data-templated="false">
             <label>
                 id
                 <input name="id" type="text" value="" data-required="true" data-calling-convention="query-string">
@@ -188,7 +188,6 @@ convert them to camel case.
 
 ## TODO
 
-- Helper to assign prev, self, next to list of links
 - Mechanism to control order properties are rendered in
 - Ability to hide ApiDescription
 - Ability to provide top-level documentation
