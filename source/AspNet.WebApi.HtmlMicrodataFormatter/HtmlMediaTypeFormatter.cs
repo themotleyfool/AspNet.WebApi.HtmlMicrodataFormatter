@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -27,11 +28,19 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             Settings = new XmlWriterSettings {OmitXmlDeclaration = true};
         }
 
+        /// <summary>
+        /// Returns <c>false</c> because accepting requests using html
+        /// is not supported.
+        /// </summary>
         public override bool CanReadType(Type type)
         {
             return false;
         }
 
+        /// <summary>
+        /// Returns <c>false</c> because <see cref="GetPerRequestFormatterInstance"/>
+        /// will return a different implementation that will be used for writing.
+        /// </summary>
         public override bool CanWriteType(Type type)
         {
             return false;
@@ -40,18 +49,64 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public override sealed Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content,
                                                        TransportContext transportContext)
         {
-            throw new NotSupportedException();
+            throw new NotSupportedException(typeof(PerRequestHtmlMediaTypeFormatter) + " must be used for writing.");
         }
 
+        /// <summary>
+        /// Settings that control how <see cref="XDocument"/> is serialized
+        /// as text in the response. By default, <see cref="XmlWriterSettings.OmitXmlDeclaration"/>
+        /// is set to <c>true</c> and <see cref="XmlWriterSettings.Indent"/> is disabled.
+        /// </summary>
         public XmlWriterSettings Settings { get; set; }
         
+        /// <summary>
+        /// Builds the list of objects to include in the <c>&lt;body&gt;</c> section.
+        /// May include <see cref="XAttribute"/> instances to specify attributes
+        /// on the body tag, such as class or style attributes.
+        /// </summary>
+        /// <param name="value">The object returned from an ApiController action, to be serialized in the body.</param>
+        /// <param name="request">The current request.</param>
+        /// <returns></returns>
         public abstract IEnumerable<XObject> BuildBody(object value, HttpRequestMessage request);
 
+        /// <summary>
+        /// Adds content to the <c>&lt;head&gt;</c> section, such as title, meta,
+        /// link and script elements.
+        /// </summary>
         public virtual void AddHeadContent(XObject content)
         {
             headElements.Add(content);
         }
 
+        /// <summary>
+        /// Sets the text to show in the <c>title</c> element.
+        /// </summary>
+        public string Title
+        {
+            get
+            {
+                var title = headElements.OfType<XElement>().FirstOrDefault(e => e.Name == "title");
+                if (title == null) return string.Empty;
+                return title.DescendantNodes().Single().ToString();
+            }
+            set
+            {
+                var title = headElements.OfType<XElement>().FirstOrDefault(e => e.Name == "title");
+                if (title == null)
+                {
+                    title = new XElement("title");
+                    AddHeadContent(title);
+                }
+                title.ReplaceAll(new XText(value));
+            }
+        }
+
+        /// <summary>
+        /// Builds the list of elements to be included in the <c>&lt;head&gt;</c> section.
+        /// Be default, returns the list of content previously added by <see cref="AddHeadContent"/>.
+        /// </summary>
+        /// <param name="value">The object returned from an ApiController action, to be serialized later in the body.</param>
+        /// <param name="request">The current request.</param>
         public virtual IEnumerable<XObject> BuildHeadElements(object value, HttpRequestMessage request)
         {
             return headElements;

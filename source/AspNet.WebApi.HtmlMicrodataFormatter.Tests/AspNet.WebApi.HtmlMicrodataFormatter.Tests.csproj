@@ -77,6 +77,7 @@
     <Compile Include="DefaultSerializerTests.cs" />
     <Compile Include="DocumentationControllerTests.cs" />
     <Compile Include="EntitySerializerTests.cs" />
+    <Compile Include="HtmlMediaTypeFormatterTests.cs" />
     <Compile Include="HtmlMicrodataFormatterTests.cs" />
     <Compile Include="LinkSerializerTests.cs" />
     <Compile Include="SerializerTestBase.cs" />
