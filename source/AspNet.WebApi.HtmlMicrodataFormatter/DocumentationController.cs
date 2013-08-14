@@ -38,6 +38,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
             foreach (var api in apiExplorer.ApiDescriptions)
             {
+                if (api.Route.IsHiddenFromApiExplorer()) continue;
+
                 var controllerDescriptor = api.ActionDescriptor.ControllerDescriptor;
                 documentation.Add(controllerDescriptor.ControllerName, api.Simplify(Configuration));
                 documentation[controllerDescriptor.ControllerName].Documentation =
@@ -47,6 +49,9 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return documentation;
         }
 
+        /// <summary>
+        /// Gets information about a given .NET type.
+        /// </summary>
         public virtual object GetTypeDocumentation(string typeName)
         {
             var documentation = DocumentationProvider.GetDocumentation(typeName);

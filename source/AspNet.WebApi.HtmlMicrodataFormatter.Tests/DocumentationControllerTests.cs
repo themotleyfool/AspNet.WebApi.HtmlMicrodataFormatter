@@ -83,6 +83,19 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             Assert.That(result.Resources.Single().Documentation, Is.EqualTo(docsForController));
         }
 
+        [Test]
+        public void HideDocumentationWithRouteToken()
+        {
+            var apiDescription = ApiDescriptionExtensionTests.CreateApiDescription(config);
+            apiDescription.Route.HideFromDocumentationExplorer();
+
+            explorer.ApiDescriptions.Add(apiDescription);
+
+            var result = controller.GetApiDocumentation();
+
+            Assert.That(result.Resources, Is.Empty);
+        }
+
         public class TestableDocumentationController : DocumentationController
         {
             public new void Initialize(HttpControllerContext controllerContext)
