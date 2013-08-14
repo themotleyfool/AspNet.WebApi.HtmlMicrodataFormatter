@@ -11,13 +11,22 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
     {
         private readonly IList<KeyValuePair<string, SimpleApiGroup>> resources = new List<KeyValuePair<string, SimpleApiGroup>>();
 
+        /// <summary>
+        /// Groupings of <see cref="SimpleApiDescription"/> by resource (ApiController).
+        /// </summary>
         public IEnumerable<SimpleApiGroup> Resources { get { return resources.Select(res => res.Value); } }
 
+        /// <summary>
+        /// Retrieves a <see cref="SimpleApiGroup"/> by resource name.
+        /// </summary>
         public SimpleApiGroup this[string resource]
         {
             get { return resources.First(r => r.Key == resource).Value; }
         }
 
+        /// <summary>
+        /// Add a <see cref="SimpleApiDescription"/> to a list grouped by resource name.
+        /// </summary>
         public void Add(string resourceName, SimpleApiDescription api)
         {
             var resource = resources.FirstOrDefault(r => r.Key == resourceName);
