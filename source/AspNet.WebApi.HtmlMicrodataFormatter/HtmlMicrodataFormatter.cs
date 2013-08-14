@@ -71,7 +71,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public override IEnumerable<XObject> BuildBody(object value, HttpRequestMessage request)
         {
-            var context = new SerializationContext(this, PropNameProvider, request);
+            var context = new SerializationContext(this, PropNameProvider, request, Title);
             return Serialize(null, value, context);
         }
 

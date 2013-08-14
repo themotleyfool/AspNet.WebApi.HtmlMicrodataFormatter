@@ -23,7 +23,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             
             request.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, configuration);
             request.Properties[HttpPropertyKeys.HttpRouteDataKey] = new HttpRouteData(new HttpRoute("doc"));
-            context = new SerializationContext(serializer, new CamelCasePropNameProvider(), request);
+            context = new SerializationContext(serializer, new CamelCasePropNameProvider(), request, "Fake Title");
         }
     }
 }

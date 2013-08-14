@@ -12,6 +12,12 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         private readonly IList<KeyValuePair<string, SimpleApiGroup>> resources = new List<KeyValuePair<string, SimpleApiGroup>>();
 
         /// <summary>
+        /// Documentation text to be shown at the top of the html document.
+        /// May include html markup, inline styles and scripts. Must be well-formed.
+        /// </summary>
+        public string TopLevelDocumentation { get; set; }
+
+        /// <summary>
         /// Groupings of <see cref="SimpleApiDescription"/> by resource (ApiController).
         /// </summary>
         public IEnumerable<SimpleApiGroup> Resources { get { return resources.Select(res => res.Value); } }

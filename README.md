@@ -189,7 +189,6 @@ convert them to camel case.
 ## TODO
 
 - Mechanism to control order properties are rendered in
-- Ability to provide top-level documentation
 - Add more custom input types (checkbox, textarea, select, file, etc)
 - Transform `<param/>` and `<returns/>` elements
 - Microdata compatible schema from type documentation
