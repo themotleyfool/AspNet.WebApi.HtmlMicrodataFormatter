@@ -10,13 +10,13 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             Property(doc => doc.Documentation, GetDocumentation);
         }
 
-        private IEnumerable<XObject> GetDocumentation(string propertyName, string value, SerializationContext context)
+        private XElement GetDocumentation(string propertyName, string value, SerializationContext context)
         {
             var div = new XElement("div", ApiDescriptionSerializer.ParseDocumentation(value));
 
             SetPropertyName(div, propertyName, context);
 
-            return new[] {div};
+            return div;
         }
     }
 }

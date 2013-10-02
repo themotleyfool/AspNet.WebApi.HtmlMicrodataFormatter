@@ -15,14 +15,17 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
     {
         private TestableDocumentationController controller;
         private HttpConfiguration config;
+        private IDocumentationProvider defaultProvider;
         private Mock<IDocumentationProviderEx> provider;
         private IApiExplorer explorer;
 
         [SetUp]
         public void SetUp()
         {
-            config = new HttpConfiguration(new HttpRouteCollection("/"));
             provider = new Mock<IDocumentationProviderEx>();
+            config = new HttpConfiguration(new HttpRouteCollection("/"));
+            defaultProvider = config.Services.GetDocumentationProvider();
+            config.Services.Replace(typeof(IDocumentationProvider), provider.Object);
             explorer = config.Services.GetApiExplorer();
             controller = new TestableDocumentationController
                 {
@@ -61,6 +64,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         [Test]
         public void InitializeThrowsOnIncompatibleProvider()
         {
+            config.Services.Replace(typeof(IDocumentationProvider), defaultProvider);
             controller.DocumentationProvider = null;
 
             TestDelegate call = () => controller.Initialize(new HttpControllerContext(config, new HttpRouteData(new HttpRoute()), new HttpRequestMessage(HttpMethod.Get, "/doc")));

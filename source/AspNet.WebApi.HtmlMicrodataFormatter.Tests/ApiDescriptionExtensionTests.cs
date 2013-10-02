@@ -17,6 +17,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         public void SetUp()
         {
             httpConfiguration = new HttpConfiguration(new HttpRouteCollection("/myApp"));
+            httpConfiguration.Services.Replace(typeof(IDocumentationProvider), new WebApiHtmlDocumentationProvider(new HtmlDocumentation()));
         }
 
         [TestFixture]

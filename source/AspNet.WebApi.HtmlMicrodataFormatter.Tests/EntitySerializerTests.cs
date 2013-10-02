@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 
@@ -47,13 +45,24 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         {
             context.PropNameProvider = new IdentityPropNameProvider();
             serializer.Property(e => e.Name, RenderName);
+
             var result = (XElement)serializer.Serialize(null, entity, context).Single();
 
             var elem = result.Descendants().Single(e => e.Attribute("itemprop") != null && e.Attribute("itemprop").Value != "Id");
+            var expected = RenderName("Name", entity.Name, context).ToString();
+            Assert.That(elem.ToString(), Is.EqualTo(expected));
+        }
 
-            var expected = RenderName("Name", entity.Name, context).Single();
+        [Test]
+        public void SetsItemPropWhenMissing()
+        {
+            serializer.Property(e => e.Name, (p, v, ctx) => new XElement("h6"));
 
-            Assert.That(elem.ToString(), Is.EqualTo(expected.ToString()));
+            var result = (XElement)serializer.Serialize(null, entity, context).Single();
+
+            var elem = result.Descendants().Single(e => e.Name == "h6");
+            Assert.That(elem.Attribute("itemprop"), Is.Not.Null, "itemprop");
+            Assert.That(elem.Attribute("itemprop").Value, Is.EqualTo("name"));
         }
 
         [Test]
@@ -65,7 +74,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 
             var elem = result.Descendants().Single(e => e.Attribute("itemprop") != null && e.Attribute("itemprop").Value != "Id");
 
-            var expected = RenderName("Name", entity.Name, context).Single();
+            var expected = RenderName("Name", entity.Name, context);
 
             Assert.That(elem.ToString(), Is.EqualTo(expected.ToString()));
         }
@@ -73,25 +82,24 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         [Test]
         public void MetaProperty()
         {
-            EntityHandler<Entity> handler = (e, _) => new[] {new XElement("blockquote", new XText(e.Name))};
+            EntityHandler<Entity> handler = (e, _) => new XElement("blockquote", new XText(e.Name));
 
             serializer.Property("NoSuch", handler);
 
             var result = (XElement)serializer.Serialize(null, entity, context).Single();
             var elem = result.Descendants().Single(e => e.Name == "blockquote");
 
-            Assert.That(elem.ToString(), Is.EqualTo("<blockquote>enty</blockquote>"));
+            Assert.That(elem.ToString(), Is.EqualTo("<blockquote itemprop=\"noSuch\">enty</blockquote>"));
         }
 
-        private IEnumerable<XObject> RenderEntity(Entity e, SerializationContext context)
+        private XElement RenderEntity(Entity e, SerializationContext context)
         {
-            yield return new XElement("section", new XAttribute("itemprop", "content"), new XText(e.Name));
+            return new XElement("section", new XAttribute("itemprop", "content"), new XText(e.Name));
         }
 
-        private IEnumerable<XObject> RenderName(string propName, string name, SerializationContext context)
+        private XElement RenderName(string propName, string name, SerializationContext context)
         {
-            var elem = new XElement("section", new XAttribute("itemprop", "content"), new XText(name));
-            return new[] {elem};
+            return new XElement("section", new XAttribute("itemprop", "content"), new XText(name));
         }
 
     }
