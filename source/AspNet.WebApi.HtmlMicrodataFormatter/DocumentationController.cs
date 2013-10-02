@@ -17,17 +17,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
             if (DocumentationProvider != null) return;
 
-            DocumentationProvider = Configuration.Services.GetService(typeof (IDocumentationProvider))
-                                    as IDocumentationProviderEx;
-
-            if (DocumentationProvider == null)
-            {
-                var msg = string.Format("{0} can only be used when {1} is registered as {2} service provider.",
-                    typeof(DocumentationController),
-                    typeof(WebApiHtmlDocumentationProvider),
-                    typeof(IDocumentationProvider));
-                throw new InvalidOperationException(msg);
-            }
+            DocumentationProvider = Configuration.Services.GetDocumentationProviderEx();
+            
         }
 
         public virtual SimpleApiDocumentation GetApiDocumentation()
@@ -41,12 +32,20 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 if (api.Route.IsHiddenFromApiExplorer()) continue;
 
                 var controllerDescriptor = api.ActionDescriptor.ControllerDescriptor;
-                documentation.Add(controllerDescriptor.ControllerName, api.Simplify(Configuration));
+                documentation.Add(controllerDescriptor.ControllerName, ConvertApiDescription(api));
                 documentation[controllerDescriptor.ControllerName].Documentation =
                     DocumentationProvider.GetDocumentation(controllerDescriptor.ControllerType);
             }
 
             return documentation;
+        }
+
+        /// <summary>
+        /// Converts a complex <see cref="ApiDescription"/> into a simpler representation.
+        /// </summary>
+        public virtual SimpleApiDescription ConvertApiDescription(ApiDescription api)
+        {
+            return api.Simplify(Configuration);
         }
 
         /// <summary>

@@ -71,6 +71,7 @@
     <Compile Include="LinkExtensions.cs" />
     <Compile Include="RouteExtensions.cs" />
     <Compile Include="RouteNames.cs" />
+    <Compile Include="ServicesContainerExtensions.cs" />
     <Compile Include="SimpleApiDocumentation.cs" />
     <Compile Include="ApiDocumentationSerializer.cs" />
     <Compile Include="DateTimeSerializer.cs" />
