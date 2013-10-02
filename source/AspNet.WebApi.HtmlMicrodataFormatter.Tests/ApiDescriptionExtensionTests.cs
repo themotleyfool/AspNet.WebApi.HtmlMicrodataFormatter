@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
@@ -52,6 +53,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             }
         }
 
+        [TestFixture]
         public class Properties : ApiDescriptionExtensionTests
         {
             [Test]
@@ -72,6 +74,33 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
                 var simple = api.Simplify(httpConfiguration);
 
                 Assert.That(simple.Documentation, Is.EqualTo(api.Documentation));
+            }
+        }
+
+        [TestFixture]
+        public class PropertyConversion : ApiDescriptionExtensionTests
+        {
+            [Test]
+            [TestCase(typeof(bool))]
+            [TestCase(typeof(string))]
+            [TestCase(typeof(decimal))]
+            [TestCase(typeof(UInt64))]
+            [TestCase(typeof(DateTime))]
+            public void SimpleTypes(Type type)
+            {
+                Assert.That(ApiDescriptionExtensions.IsSimpleType(type), Is.True, "For type " + type);
+            }
+
+            public class Model
+            {
+                public string Name { get; set; }
+                public bool Active { get; set; }
+            }
+
+            [Test]
+            public void NonSimpleType()
+            {
+                Assert.That(ApiDescriptionExtensions.IsSimpleType(typeof(Model)), Is.False, "For type " + typeof(Model));
             }
         }
 

@@ -11,9 +11,18 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public override IEnumerable<XObject> Serialize(string propertyName, object obj, SerializationContext context)
         {
-            if (obj == null) return Enumerable.Empty<XObject>();
+            var element = CreateAnchor(propertyName, obj, context);
 
-            var link = (Link)obj;
+            if (element == null) return Enumerable.Empty<XObject>();
+
+            return new[] {element};
+        }
+
+        public virtual XElement CreateAnchor(string propertyName, object obj, SerializationContext context)
+        {
+            if (obj == null) return null;
+
+            var link = (Link) obj;
 
             var element = new XElement("a",
                 link.Attributes.Select(attr => new XAttribute(attr.Key, attr.Value)),
@@ -21,7 +30,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
             SetPropertyName(element, propertyName, context);
 
-            return new[] {element};
+            return element;
         }
     }
 }

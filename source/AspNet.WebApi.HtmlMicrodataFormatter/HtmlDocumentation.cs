@@ -64,6 +64,12 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return GetNodeText(ParameterXPathExpression, "M:" + methodName, parameterName);
         }
 
+        public string GetPropertyDocumentation(PropertyInfo propertyInfo)
+        {
+            var propertyName = string.Format("{0}.{1}", propertyInfo.DeclaringType.FullName, propertyInfo.Name);
+            return GetNodeText(MemberXPathExpression, "P:" + propertyName);
+        }
+
         private string GetNodeText(string queryFormat, params object[] args)
         {
             var selectExpression = string.Format(queryFormat, args);
@@ -105,6 +111,5 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
             return typeName;
         }
-
     }
 }

@@ -34,7 +34,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                                           new XAttribute("class", "api-group"),
                                           new XAttribute("id", group.Name),
                                           BuildApiGroupSummary(group),
-                                          group.Actions.Select(api => base.Serialize(propertyName, api, context))));
+                                          group.Actions.Select(api => context.Serialize(propertyName, api))));
             }
 
             var container = new XElement("div",
@@ -50,7 +50,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         /// text from <see cref="HtmlMediaTypeFormatter.Title"/> if available, or placeholder
         /// text otherwise.
         /// </summary>
-        public virtual IEnumerable<XElement> BuildTopLevelDocumentation(SimpleApiDocumentation descriptions, SerializationContext context)
+        public virtual IEnumerable<XNode> BuildTopLevelDocumentation(SimpleApiDocumentation descriptions, SerializationContext context)
         {
             if (!string.IsNullOrWhiteSpace(descriptions.TopLevelDocumentation))
             {

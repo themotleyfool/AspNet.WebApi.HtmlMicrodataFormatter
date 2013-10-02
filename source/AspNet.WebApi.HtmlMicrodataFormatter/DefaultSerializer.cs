@@ -113,7 +113,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         protected internal virtual IEnumerable<XObject> BuildPropertyValue(object parent, string propertyName, object propertyValue, SerializationContext context)
         {
-            return context.RootSerializer.Serialize(propertyName, propertyValue, context);
+            return context.Serialize(propertyName, propertyValue);
         }
 
         protected internal virtual IEnumerable<KeyValuePair<string, object>> Reflect(object value)

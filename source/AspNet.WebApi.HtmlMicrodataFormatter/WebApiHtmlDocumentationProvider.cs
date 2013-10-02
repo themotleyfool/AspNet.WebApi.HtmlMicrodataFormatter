@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
 
@@ -16,6 +17,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         /// but not the assembly name, similar to <see cref="Type.FullName"/>.
         /// </summary>
         string GetDocumentation(string fullTypeName);
+
+        /// <summary>
+        /// Gets documentation provided for a property.
+        /// </summary>
+        string GetDocumentation(PropertyInfo propertyInfo);
     }
 
     /// <summary>
@@ -39,6 +45,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public string GetDocumentation(string fullTypeName)
         {
             return documentation.GetTypeDocumentation(fullTypeName);
+        }
+
+        public string GetDocumentation(PropertyInfo propertyInfo)
+        {
+            return documentation.GetPropertyDocumentation(propertyInfo);
         }
 
         public string GetDocumentation(HttpActionDescriptor actionDescriptor)
