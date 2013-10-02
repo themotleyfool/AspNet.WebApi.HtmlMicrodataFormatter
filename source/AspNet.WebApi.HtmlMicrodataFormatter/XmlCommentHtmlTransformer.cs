@@ -8,7 +8,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
     public class XmlCommentHtmlTransformer
     {
-        private static readonly ISet<string> SectionTags = new HashSet<string>(new[] { "summary", "example", "remarks" });
+        private static readonly ISet<string> SectionTags = new HashSet<string>(new[] { "example", "exception", "permission", "remarks", "returns", "summary", "typeparam" });
 
         private static readonly IDictionary<string, string> ReplaceTags = new Dictionary<string, string>
             {

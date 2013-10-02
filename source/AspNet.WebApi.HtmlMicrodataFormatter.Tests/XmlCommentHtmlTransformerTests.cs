@@ -21,6 +21,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         [TestCase("example")]
         [TestCase("summary")]
         [TestCase("remarks")]
+        [TestCase("returns")]
         public void TransformBlockTags(string elementName)
         {
             var xml = string.Format("<root><{0}>text</{0}></root>", elementName);

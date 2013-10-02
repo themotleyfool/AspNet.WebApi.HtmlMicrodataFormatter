@@ -48,7 +48,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public string GetMethodDocumentation(MethodInfo method)
         {
             var name = GetMethodName(method);
-            return GetNodeText(MemberXPathExpression, "M:" + name);
+            var expression = string.Format(MemberXPathExpression, "M:" + name);
+
+            var node = GetFirstMatch(expression);
+
+            if (node == null) return string.Empty;
+
+            var nonParamElements = node.Select("./*[name() != 'param']").Cast<XPathNavigator>().Select(n => n.InnerXml);
+            return string.Join("", nonParamElements);
         }
 
         public string GetParameterDocumentation(MethodInfo method, string parameterName)
@@ -61,12 +68,16 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
             var selectExpression = string.Format(queryFormat, args);
 
-            return documentNavigators
-                       .Select(n => n.SelectSingleNode(selectExpression))
-                       .Where(r => r != null)
-                       .Select(n => n.InnerXml)
-                       .FirstOrDefault() ?? "";
+            var node = GetFirstMatch(selectExpression);
+            return node != null ? node.InnerXml : string.Empty;
         }
+
+        private XPathNavigator GetFirstMatch(string selectExpression)
+        {
+            return documentNavigators
+                .Select(n => n.SelectSingleNode(selectExpression)).FirstOrDefault(r => r != null);
+        }
+
 
         private string GetMethodName(MethodInfo method)
         {
