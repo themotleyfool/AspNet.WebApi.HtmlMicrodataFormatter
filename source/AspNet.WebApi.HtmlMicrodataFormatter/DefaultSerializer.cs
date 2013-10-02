@@ -55,7 +55,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
             if (string.IsNullOrEmpty(propertyName)) return;
 
-            element.SetAttributeValue("itemprop", context.PropNameProvider.GetItemProp(propertyName));
+            element.SetAttributeValue("itemprop", context.FormatPropertyName(propertyName));
         }
 
         protected virtual string GetItemType(Type type, SerializationContext context)

@@ -16,13 +16,13 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         [Test]
         public void FormAttributes()
         {
-            var form = serializer.BuildForm(desc);
+            var form = serializer.BuildForm(desc, context);
 
             Assert.That(form.Attribute("action").Value, Is.EqualTo(desc.Href));
             Assert.That(form.Attribute("method").Value, Is.EqualTo(desc.Method));
-            Assert.That(form.Attribute("name").Value, Is.EqualTo(desc.Name));
+            Assert.That(form.Attribute("name").Value, Is.EqualTo(context.FormatPropertyName(desc.Name)));
             Assert.That(form.Attribute("data-templated").Value, Is.EqualTo("false"));
-            Assert.That(form.Attribute("data-rel").Value, Is.EqualTo("AnActionName"));
+            Assert.That(form.Attribute("data-rel").Value, Is.EqualTo(context.FormatPropertyName(desc.Name)));
         }
     }
 }

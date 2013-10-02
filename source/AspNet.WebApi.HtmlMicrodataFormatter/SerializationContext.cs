@@ -20,5 +20,10 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public IPropNameProvider PropNameProvider { get; set; }
         public HttpRequestMessage Request { get; set; }
         public string Title { get; set; }
+
+        public string FormatPropertyName(string propertyName)
+        {
+            return PropNameProvider.GetItemProp(propertyName);
+        }
     }
 }

@@ -52,7 +52,6 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             entityHandlers.Add(propertyName, entityHandler);
         }
 
-
         protected internal override IEnumerable<KeyValuePair<string, object>> Reflect(object value)
         {
             var dic = base.Reflect(value).ToDictionary(kv => kv.Key, kv => kv.Value);
@@ -66,6 +65,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
             return dic;
         }
+
         protected internal override IEnumerable<XObject> BuildPropertyValue(object entity, string propertyName, object propertyValue, SerializationContext context)
         {
             Delegate handler;
