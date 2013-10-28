@@ -27,7 +27,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             var actionName = apiDescription.ActionDescriptor.ActionName;
 
             href = href.Replace("{action}", actionName.ToLowerInvariant())
-                       .Replace("{controller}", controllerName.ToLowerInvariant());
+                       .Replace("{controller}", controllerName.ToLowerInvariant())
+                       .Replace("{*", "{");
 
             var documentationProvider = config.Services.GetDocumentationProviderEx();
 

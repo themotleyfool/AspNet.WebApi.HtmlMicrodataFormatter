@@ -44,6 +44,16 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             }
 
             [Test]
+            public void RemoveAsteriskFromCatchAllParameter()
+            {
+                var api = CreateApiDescription("users/{*name}");
+
+                var simple = api.Simplify(httpConfiguration);
+
+                Assert.That(simple.Href, Is.EqualTo("/myApp/users/{name}"));
+            }
+
+            [Test]
             public void ReplaceControllerInTemplate()
             {
                 var api = CreateApiDescription("{controller}");
