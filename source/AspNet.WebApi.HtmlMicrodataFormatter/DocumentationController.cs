@@ -43,6 +43,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         /// <summary>
         /// Converts a complex <see cref="ApiDescription"/> into a simpler representation.
         /// </summary>
+        [NonAction]
         public virtual SimpleApiDescription ConvertApiDescription(ApiDescription api)
         {
             return api.Simplify(Configuration);
@@ -51,6 +52,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         /// <summary>
         /// Gets information about a given .NET type.
         /// </summary>
+        [NonAction]
         public virtual object GetTypeDocumentation(string typeName)
         {
             var documentation = DocumentationProvider.GetDocumentation(typeName);
