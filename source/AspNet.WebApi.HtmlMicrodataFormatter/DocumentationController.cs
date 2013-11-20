@@ -34,7 +34,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 var controllerDescriptor = api.ActionDescriptor.ControllerDescriptor;
                 documentation.Add(controllerDescriptor.ControllerName, ConvertApiDescription(api));
                 documentation[controllerDescriptor.ControllerName].Documentation =
-                    DocumentationProvider.GetDocumentation(controllerDescriptor.ControllerType);
+                    DocumentationProvider.GetDocumentation(controllerDescriptor);
             }
 
             return documentation;
@@ -49,19 +49,5 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             return api.Simplify(Configuration);
         }
 
-        /// <summary>
-        /// Gets information about a given .NET type.
-        /// </summary>
-        [NonAction]
-        public virtual object GetTypeDocumentation(string typeName)
-        {
-            var documentation = DocumentationProvider.GetDocumentation(typeName);
-            if (string.IsNullOrWhiteSpace(documentation))
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Documentation for the type '" + typeName + "' was not found.");
-            }
-
-            return new SimpleTypeDocumentation {Name = typeName, Documentation = documentation};
-        }
     }
 }

@@ -76,11 +76,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         public void GetsDocumentationFromApiExplorer()
         {
             var apiDescription = ApiDescriptionExtensionTests.CreateApiDescription(config);
-            var controllerType = apiDescription.ActionDescriptor.ControllerDescriptor.ControllerType;
+            var controllerDescriptor = apiDescription.ActionDescriptor.ControllerDescriptor;
             const string docsForController = "docs for controller";
 
             explorer.ApiDescriptions.Add(apiDescription);
-            provider.Setup(p => p.GetDocumentation(controllerType)).Returns(docsForController);
+            provider.Setup(p => p.GetDocumentation(controllerDescriptor)).Returns(docsForController);
 
             var result = controller.GetApiDocumentation();
 

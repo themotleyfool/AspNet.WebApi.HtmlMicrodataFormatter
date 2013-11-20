@@ -17,9 +17,7 @@
     <copyright>Copyright 2013 The Motley Fool LLC</copyright>
     <tags>microdata rest webapi HATEOAS HtmlMicrodataFormatter</tags>
     <dependencies>
-      <dependency id="Microsoft.AspNet.WebApi.WebHost" version="[4.0, 5.0)" />
-      <dependency id="Microsoft.Net.Http" version="[2.0, 3.0)" />
-      <dependency id="WebActivator" version="[1.5.3, 2.0)" />
+      <dependency id="WebActivatorEx" version="[2.0, 3.0)" />
       <dependency id="AspNet.WebApi.HtmlMicrodataFormatter" version="$version$" />
     </dependencies>
   </metadata>
