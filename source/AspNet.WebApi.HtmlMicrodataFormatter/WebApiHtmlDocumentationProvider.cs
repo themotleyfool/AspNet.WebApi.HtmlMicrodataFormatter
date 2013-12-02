@@ -11,6 +11,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         /// Gets documentation provided for a property.
         /// </summary>
         string GetDocumentation(PropertyInfo propertyInfo);
+
+        /// <summary>
+        /// Gets documentation provided for a type.
+        /// </summary>
+        string GetDocumentation(Type type);
     }
 
     /// <summary>
@@ -43,7 +48,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public string GetResponseDocumentation(HttpActionDescriptor actionDescriptor)
         {
-            throw new NotImplementedException();
+            return "descritpion for " + actionDescriptor.ActionBinding;
         }
 
         public string GetDocumentation(HttpControllerDescriptor controllerDescriptor)

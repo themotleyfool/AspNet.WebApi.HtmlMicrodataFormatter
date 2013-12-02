@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -52,7 +51,15 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public static IEnumerable<SimpleApiParameterDescriptor> Flatten(ApiDescription apiDescription, ApiParameterDescription parameterDescription, IDocumentationProviderEx documentationProvider)
         {
             var descriptor = parameterDescription.ParameterDescriptor;
-            
+
+            if (descriptor == null)
+            {
+                return new[]
+                {
+                    new SimpleApiParameterDescriptor(parameterDescription.Name, apiDescription.RelativePath, parameterDescription.Source, parameterDescription.Documentation)
+                };
+            }
+
             if (IsSimpleType(descriptor.ParameterType))
             {
                 return new[] { new SimpleApiParameterDescriptor(descriptor, apiDescription.RelativePath, parameterDescription.Documentation) };    
@@ -60,21 +67,25 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             
             if (UsesCustomModelBinder(descriptor))
             {
+                var callingConvention = SimpleApiParameterDescriptor.GetCallingConvention(apiDescription.RelativePath, descriptor.ParameterName);
+
                 return new[]
                 {
-                    new SimpleApiParameterDescriptor(descriptor.ParameterName, "unknown", descriptor.DefaultValue, descriptor.IsOptional, parameterDescription.Documentation)
+                    
+                    new SimpleApiParameterDescriptor(descriptor.ParameterName, callingConvention, descriptor.DefaultValue, descriptor.IsOptional, parameterDescription.Documentation)
                 };
             }
 
             return EnumerateProperties(apiDescription, descriptor.ParameterType, documentationProvider);
         }
 
-        private static IEnumerable<SimpleApiParameterDescriptor> EnumerateProperties(ApiDescription apiDescription, IReflect type, IDocumentationProviderEx documentationProvider, string prefix = "", IList<SimpleApiParameterDescriptor> list = null)
+        private static IEnumerable<SimpleApiParameterDescriptor> EnumerateProperties(ApiDescription apiDescription, IReflect type, IDocumentationProviderEx documentationProvider, string prefix = "", IList<SimpleApiParameterDescriptor> list = null, ISet<Type> visitedTypes = null)
         {
             if (list == null) list = new List<SimpleApiParameterDescriptor>();
+            if (visitedTypes == null) visitedTypes = new HashSet<Type>();
 
             var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            var callingConvention = apiDescription.HttpMethod == HttpMethod.Get ? "query-string" : "body";
+            var callingConvention = (apiDescription.HttpMethod == HttpMethod.Get || apiDescription.HttpMethod == HttpMethod.Head) ? "query-string" : "body";
 
             foreach (var p in props.Where(prop => prop.CanWrite))
             {
@@ -84,7 +95,15 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 }
                 else
                 {
-                    EnumerateProperties(apiDescription, p.PropertyType, documentationProvider, prefix + p.Name + ".", list);
+                    if (visitedTypes.Contains(p.PropertyType))
+                    {
+                        list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, callingConvention, null, false, documentationProvider.GetDocumentation(p)));
+                    }
+                    else
+                    {
+                        visitedTypes.Add(p.PropertyType);
+                        EnumerateProperties(apiDescription, p.PropertyType, documentationProvider, prefix + p.Name + ".", list, visitedTypes);
+                    }
                 }
             }
 
@@ -93,8 +112,9 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         private static bool UsesCustomModelBinder(HttpParameterDescriptor descriptor)
         {
-            return descriptor.GetCustomAttributes<ModelBinderAttribute>().Any() ||
-                   descriptor.ParameterType.GetCustomAttributes(typeof (ModelBinderAttribute), true).Any();
+            return descriptor.GetCustomAttributes<ModelBinderAttribute>()
+                .Union(descriptor.ParameterType.GetCustomAttributes(typeof (ModelBinderAttribute), true))
+                .Any(attr => attr.GetType() != typeof(FromUriAttribute) && attr.GetType() != typeof(FromBodyAttribute));
         }
 
         internal static readonly ISet<Type> WellKnownSimpleTypes = new HashSet<Type>

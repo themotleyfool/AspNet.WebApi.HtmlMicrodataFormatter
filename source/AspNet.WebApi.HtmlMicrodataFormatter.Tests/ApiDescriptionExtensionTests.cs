@@ -113,6 +113,17 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             {
                 Assert.That(ApiDescriptionExtensions.IsSimpleType(typeof(Model)), Is.False, "For type " + typeof(Model));
             }
+
+            [Test]
+            public void ShortCircuitOnGraphCycle()
+            {
+                var api = CreateApiDescription(httpConfiguration, actionName: "Cyclical");
+                var pi = typeof (SampleController).GetMethod("Cyclical").GetParameters().Single();
+                var pd = new ReflectedHttpParameterDescriptor(api.ActionDescriptor, pi);
+                api.ParameterDescriptions.Add(new ApiParameterDescription { ParameterDescriptor = pd });
+                TestDelegate call = () => ApiDescriptionExtensions.Flatten(api, api.ParameterDescriptions.Single(), httpConfiguration.Services.GetDocumentationProviderEx());
+                Assert.That(call, Throws.Nothing);
+            }
         }
 
         private ApiDescription CreateApiDescription(string routeTemplate = "foo/bar")
@@ -120,14 +131,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             return CreateApiDescription(httpConfiguration, routeTemplate);
         }
 
-        public static ApiDescription CreateApiDescription(HttpConfiguration httpConfiguration, string routeTemplate = "foo/bar")
+        public static ApiDescription CreateApiDescription(HttpConfiguration httpConfiguration, string routeTemplate = "foo/bar", string actionName = "Put")
         {
             var api = new ApiDescription();
 
             api.Route = new HttpRoute(routeTemplate, new HttpRouteValueDictionary());
 
             var controllerDescriptor = new HttpControllerDescriptor(httpConfiguration, "Sample", typeof(SampleController));
-            api.ActionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, controllerDescriptor.ControllerType.GetMethod("Put"));
+            api.ActionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, controllerDescriptor.ControllerType.GetMethod(actionName));
             api.HttpMethod = HttpMethod.Put;
             api.Documentation = "Docs for " + routeTemplate;
 
@@ -140,6 +151,21 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             {
                 return "OK";
             }
+
+            public object Cyclical(Outer outer)
+            {
+                return "OK";
+            }
+        }
+
+        public class Outer
+        {
+            public Inner Inner { get; set; }
+        }
+
+        public class Inner
+        {
+            public Outer Outer { get; set; }
         }
     }
 }

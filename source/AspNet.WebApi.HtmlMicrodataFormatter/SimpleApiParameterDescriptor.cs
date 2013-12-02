@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using System.Web.Http.Description;
 
 namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
@@ -21,6 +22,22 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             Documentation = documentation;
         }
 
+        public SimpleApiParameterDescriptor(string name, string routePath, ApiParameterSource callingConvention, string documentation)
+            : this(name, GetCallingConvention(name, routePath, callingConvention), null, false, documentation)
+        {
+        }
+
+        private static string GetCallingConvention(string name, string routePath, ApiParameterSource callingConvention)
+        {
+            switch (callingConvention)
+            {
+                case ApiParameterSource.FromBody:
+                    return "body";
+                default:
+                    return GetCallingConvention(routePath, name);
+            }
+        }
+
         public SimpleApiParameterDescriptor(HttpParameterDescriptor arg, string routePath, string documentation="")
         {
             this.Name = arg.ParameterName;
@@ -32,29 +49,33 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 this.DefaultValue = arg.DefaultValue;
             }
 
-            var indexOfQueryString = routePath.IndexOf('?');
-
             if (arg.ParameterBinderAttribute is FromBodyAttribute)
             {
                 this.CallingConvention = "body";
             }
             else
             {
-                var indexOfParameter = routePath.IndexOf("{" + arg.ParameterName + "}", StringComparison.InvariantCultureIgnoreCase);
-
-                if (indexOfQueryString > 0 && indexOfParameter > indexOfQueryString)
-                {
-                    this.CallingConvention = "query-string";
-                }
-                else if (indexOfParameter > 0)
-                {
-                    this.CallingConvention = "uri";
-                }
-                else
-                {
-                    this.CallingConvention = "unknown";
-                }
+                this.CallingConvention = GetCallingConvention(routePath, arg.ParameterName);
             }
+        }
+
+        public static string GetCallingConvention(string routePath, string parameterName)
+        {
+            var indexOfQueryString = routePath.IndexOf('?');
+
+            var indexOfParameter = routePath.IndexOf("{" + parameterName + "}", StringComparison.InvariantCultureIgnoreCase);
+
+            if (indexOfQueryString > 0 && indexOfParameter > indexOfQueryString)
+            {
+                return "query-string";
+            }
+
+            if (indexOfParameter > 0)
+            {
+                return "uri";
+            }
+
+            return "unknown";
         }
     }
 }
