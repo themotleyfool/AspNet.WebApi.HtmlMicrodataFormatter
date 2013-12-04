@@ -12,12 +12,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
     public class ApiDescriptionExtensionTests
     {
         private HttpConfiguration httpConfiguration;
+        private IDocumentationProviderEx documentationProvider;
 
         [SetUp]
         public void SetUp()
         {
             httpConfiguration = new HttpConfiguration(new HttpRouteCollection("/myApp"));
             httpConfiguration.Services.Replace(typeof(IDocumentationProvider), new WebApiHtmlDocumentationProvider(new HtmlDocumentation()));
+            documentationProvider = httpConfiguration.Services.GetDocumentationProviderEx();
         }
 
         [TestFixture]
@@ -118,11 +120,33 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             public void ShortCircuitOnGraphCycle()
             {
                 var api = CreateApiDescription(httpConfiguration, actionName: "Cyclical");
-                var pi = typeof (SampleController).GetMethod("Cyclical").GetParameters().Single();
-                var pd = new ReflectedHttpParameterDescriptor(api.ActionDescriptor, pi);
-                api.ParameterDescriptions.Add(new ApiParameterDescription { ParameterDescriptor = pd });
-                TestDelegate call = () => ApiDescriptionExtensions.Flatten(api, api.ParameterDescriptions.Single(), httpConfiguration.Services.GetDocumentationProviderEx());
+                TestDelegate call = () => ApiDescriptionExtensions.Flatten(api, api.ParameterDescriptions.Single(), documentationProvider);
                 Assert.That(call, Throws.Nothing);
+            }
+
+            [Test]
+            public void ConvertArray()
+            {
+                var api = CreateApiDescription(httpConfiguration, actionName: "Array");
+
+                var results = ApiDescriptionExtensions.Flatten(api, api.ParameterDescriptions.Single(), documentationProvider);
+
+                var result = results.Single();
+                Assert.That(result.Name, Is.EqualTo("array"));
+                Assert.That(result.IsOptional, Is.False, "IsOptional");
+                Assert.That(result.CallingConvention, Is.EqualTo("body"));
+                Assert.That(result.IsMany, Is.True, "SimpleApiDescription.IsMany");
+            }
+
+            [Test]
+            public void ConvertComplexWithArray()
+            {
+                var api = CreateApiDescription(httpConfiguration, actionName: "ComplexWithArray");
+
+                var results = ApiDescriptionExtensions.Flatten(api, api.ParameterDescriptions.Single(), documentationProvider);
+
+                var result = results.Single();
+                Assert.That(result.IsMany, Is.True, "SimpleApiDescription.IsMany");
             }
         }
 
@@ -138,9 +162,18 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             api.Route = new HttpRoute(routeTemplate, new HttpRouteValueDictionary());
 
             var controllerDescriptor = new HttpControllerDescriptor(httpConfiguration, "Sample", typeof(SampleController));
-            api.ActionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, controllerDescriptor.ControllerType.GetMethod(actionName));
+            var methodInfo = controllerDescriptor.ControllerType.GetMethod(actionName);
+            api.ActionDescriptor = new ReflectedHttpActionDescriptor(controllerDescriptor, methodInfo);
             api.HttpMethod = HttpMethod.Put;
             api.Documentation = "Docs for " + routeTemplate;
+            api.RelativePath = routeTemplate;
+
+            var parameters = methodInfo.GetParameters();
+            foreach (var pi in parameters)
+            {
+                var pd = new ReflectedHttpParameterDescriptor(api.ActionDescriptor, pi);
+                api.ParameterDescriptions.Add(new ApiParameterDescription {ParameterDescriptor = pd});
+            }
 
             return api;
         }
@@ -156,6 +189,16 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             {
                 return "OK";
             }
+
+            public object Array([FromBody]string[] array)
+            {
+                return "OK";
+            }
+
+            public object ComplexWithArray(ComplexWithArray obj)
+            {
+                return "OK";
+            }
         }
 
         public class Outer
@@ -166,6 +209,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         public class Inner
         {
             public Outer Outer { get; set; }
+        }
+
+        public class ComplexWithArray
+        {
+            public string[] Array { get; set; }
         }
     }
 }

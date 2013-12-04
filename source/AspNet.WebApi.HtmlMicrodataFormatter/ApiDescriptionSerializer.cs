@@ -105,14 +105,24 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
                 if (p.CallingConvention != "unknown")
                 {
+                    var dataAttrs = new List<XAttribute>
+                    {
+                        new XAttribute("data-required", !p.IsOptional && !p.IsMany),
+                        new XAttribute("data-calling-convention", p.CallingConvention)
+                    };
+
+                    if (p.IsMany)
+                    {
+                        dataAttrs.Add(new XAttribute("data-allow-multiple", "true"));
+                    }
+
                     yield return new XElement("label",
                         new XText(name),
                         new XElement("input",
                             new XAttribute("name", name),
                             new XAttribute("type", type),
                             new XAttribute("value", p.DefaultValue ?? ""),
-                            new XAttribute("data-required", !p.IsOptional),
-                            new XAttribute("data-calling-convention", p.CallingConvention)));
+                            dataAttrs));
                 }
                 else
                 {

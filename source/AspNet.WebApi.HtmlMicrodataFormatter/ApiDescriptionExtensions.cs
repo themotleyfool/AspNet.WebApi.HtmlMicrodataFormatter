@@ -60,9 +60,12 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 };
             }
 
-            if (IsSimpleType(descriptor.ParameterType))
+            bool isMany;
+            var parameterType = Unwrap(descriptor.ParameterType, out isMany);
+
+            if (IsSimpleType(parameterType))
             {
-                return new[] { new SimpleApiParameterDescriptor(descriptor, apiDescription.RelativePath, parameterDescription.Documentation) };    
+                return new[] { new SimpleApiParameterDescriptor(descriptor, apiDescription.RelativePath, isMany, parameterDescription.Documentation) };    
             }
             
             if (UsesCustomModelBinder(descriptor))
@@ -71,12 +74,22 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
                 return new[]
                 {
-                    
-                    new SimpleApiParameterDescriptor(descriptor.ParameterName, callingConvention, descriptor.DefaultValue, descriptor.IsOptional, parameterDescription.Documentation)
+                    new SimpleApiParameterDescriptor(descriptor.ParameterName, callingConvention, descriptor.DefaultValue, descriptor.IsOptional, isMany, parameterDescription.Documentation)
                 };
             }
 
-            return EnumerateProperties(apiDescription, descriptor.ParameterType, documentationProvider);
+            return EnumerateProperties(apiDescription, parameterType, documentationProvider);
+        }
+
+        private static Type Unwrap(Type parameterType, out bool isMany)
+        {
+            isMany = false;
+            if (parameterType.IsArray)
+            {
+                isMany = true;
+                return parameterType.GetElementType();
+            }
+            return parameterType;
         }
 
         private static IEnumerable<SimpleApiParameterDescriptor> EnumerateProperties(ApiDescription apiDescription, IReflect type, IDocumentationProviderEx documentationProvider, string prefix = "", IList<SimpleApiParameterDescriptor> list = null, ISet<Type> visitedTypes = null)
@@ -86,23 +99,26 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
             var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
             var callingConvention = (apiDescription.HttpMethod == HttpMethod.Get || apiDescription.HttpMethod == HttpMethod.Head) ? "query-string" : "body";
-
+            
             foreach (var p in props.Where(prop => prop.CanWrite))
             {
-                if (IsSimpleType(p.PropertyType))
+                bool isMany;
+                var parameterType = Unwrap(p.PropertyType, out isMany);
+                
+                if (IsSimpleType(parameterType))
                 {
-                    list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, callingConvention, null, false, documentationProvider.GetDocumentation(p)));
+                    list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, callingConvention, null, false, isMany, documentationProvider.GetDocumentation(p)));
                 }
                 else
                 {
                     if (visitedTypes.Contains(p.PropertyType))
                     {
-                        list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, callingConvention, null, false, documentationProvider.GetDocumentation(p)));
+                        list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, callingConvention, null, false, isMany, documentationProvider.GetDocumentation(p)));
                     }
                     else
                     {
                         visitedTypes.Add(p.PropertyType);
-                        EnumerateProperties(apiDescription, p.PropertyType, documentationProvider, prefix + p.Name + ".", list, visitedTypes);
+                        EnumerateProperties(apiDescription, parameterType, documentationProvider, prefix + p.Name + ".", list, visitedTypes);
                     }
                 }
             }
