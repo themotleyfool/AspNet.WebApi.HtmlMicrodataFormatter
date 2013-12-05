@@ -70,6 +70,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                                 new XAttribute("method", api.Method),
                                 new XAttribute("data-templated", api.Templated),
                                 new XAttribute("data-rel", formName),
+                                new XAttribute("data-requires-authentication", api.RequiresAuthentication),
                                 BuildFormInputs(api, context));
         }
 

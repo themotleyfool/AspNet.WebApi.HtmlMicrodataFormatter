@@ -67,7 +67,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         }
 
         [TestFixture]
-        public class Properties : ApiDescriptionExtensionTests
+        public class PropertiesTests : ApiDescriptionExtensionTests
         {
             [Test]
             public void SetNameFromControllerAndAction()
@@ -91,7 +91,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         }
 
         [TestFixture]
-        public class PropertyConversion : ApiDescriptionExtensionTests
+        public class PropertyConversionTests : ApiDescriptionExtensionTests
         {
             [Test]
             [TestCase(typeof(bool))]
@@ -150,9 +150,43 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             }
         }
 
-        private ApiDescription CreateApiDescription(string routeTemplate = "foo/bar")
+        [TestFixture]
+        public class AuthorizationTests : ApiDescriptionExtensionTests
         {
-            return CreateApiDescription(httpConfiguration, routeTemplate);
+            [Test]
+            public void NoAuthentication()
+            {
+                var desc = CreateApiDescription(actionName:"Get");
+
+                var result = desc.Simplify(httpConfiguration);
+
+                Assert.That(result.RequiresAuthentication, Is.False, "RequiresAuthentication");
+            }
+
+            [Test]
+            public void RequiresAuthentication()
+            {
+                var desc = CreateApiDescription(actionName: "Put");
+
+                var result = desc.Simplify(httpConfiguration);
+
+                Assert.That(result.RequiresAuthentication, Is.True, "RequiresAuthentication");
+            }
+
+            [Test]
+            public void RequiresRole()
+            {
+                var desc = CreateApiDescription(actionName: "Delete");
+
+                var result = desc.Simplify(httpConfiguration);
+
+                Assert.That(result.RequiresRoles.Single(), Is.EqualTo(new[] {"Role1", "Role2"}));
+            }
+        }
+
+        private ApiDescription CreateApiDescription(string routeTemplate = "foo/bar", string actionName = "Put")
+        {
+            return CreateApiDescription(httpConfiguration, routeTemplate, actionName);
         }
 
         public static ApiDescription CreateApiDescription(HttpConfiguration httpConfiguration, string routeTemplate = "foo/bar", string actionName = "Put")
@@ -180,7 +214,19 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
 
         public class SampleController : ApiController
         {
+            [Authorize]
             public object Put()
+            {
+                return "OK";
+            }
+
+            [Authorize(Roles="Role1, Role2")]
+            public object Delete()
+            {
+                return "OK";
+            }
+
+            public object Get()
             {
                 return "OK";
             }

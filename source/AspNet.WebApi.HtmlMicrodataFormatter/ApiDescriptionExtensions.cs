@@ -40,7 +40,26 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                     Parameters = apiDescription.ParameterDescriptions.SelectMany(pd => Flatten(apiDescription, pd, documentationProvider)).ToList()
                 };
 
+            AddAuthenticationInfo(simpleApi, apiDescription);
+
             return simpleApi;
+        }
+
+        private static void AddAuthenticationInfo(SimpleApiDescription simpleApi, ApiDescription apiDescription)
+        {
+            var authorizeAttributes = 
+                apiDescription.ActionDescriptor.GetCustomAttributes<AuthorizeAttribute>(true)
+                .Union(apiDescription.ActionDescriptor.ControllerDescriptor.GetCustomAttributes<AuthorizeAttribute>(true));
+
+            if (authorizeAttributes.Any())
+            {
+                simpleApi.RequiresAuthentication = true;
+            }
+
+            simpleApi.RequiresRoles =
+                authorizeAttributes
+                    .Where(attr => !string.IsNullOrWhiteSpace(attr.Roles))
+                    .Select(attr => attr.Roles.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(r => r.Trim()));
         }
 
         /// <summary>

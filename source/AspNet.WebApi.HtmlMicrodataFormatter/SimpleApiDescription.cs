@@ -12,6 +12,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public string Href { get; set; }
         public string Method { get; set; }
         public IEnumerable<SimpleApiParameterDescriptor> Parameters { get; set; }
+        public bool RequiresAuthentication { get; set; }
+        public IEnumerable<IEnumerable<string>> RequiresRoles { get; set; }
 
         public bool Templated
         {
