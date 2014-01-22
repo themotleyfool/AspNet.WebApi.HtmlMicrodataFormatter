@@ -46,6 +46,16 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             }
 
             [Test]
+            public void RemoveOptionalParameterInTemplate()
+            {
+                var api = CreateApiDescription("foo/{id}", actionName:"GetAll");
+
+                var simple = api.Simplify(httpConfiguration);
+
+                Assert.That(simple.Href, Is.EqualTo("/myApp/foo/"));
+            }
+
+            [Test]
             public void RemoveAsteriskFromCatchAllParameter()
             {
                 var api = CreateApiDescription("users/{*name}");
@@ -206,7 +216,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
             foreach (var pi in parameters)
             {
                 var pd = new ReflectedHttpParameterDescriptor(api.ActionDescriptor, pi);
-                api.ParameterDescriptions.Add(new ApiParameterDescription {ParameterDescriptor = pd});
+                api.ParameterDescriptions.Add(new ApiParameterDescription {ParameterDescriptor = pd, Name = pi.Name});
             }
 
             return api;
@@ -215,7 +225,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
         public class SampleController : ApiController
         {
             [Authorize]
-            public object Put()
+            public object Put(string name)
             {
                 return "OK";
             }
@@ -226,7 +236,12 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter.Tests
                 return "OK";
             }
 
-            public object Get()
+            public object GetAll()
+            {
+                return "OK";
+            }
+
+            public object Get(string id)
             {
                 return "OK";
             }

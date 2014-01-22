@@ -25,11 +25,14 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             var controllerName = apiDescription.ActionDescriptor.ControllerDescriptor.ControllerName;
             var actionName = apiDescription.ActionDescriptor.ActionName;
 
+            var documentationProvider = config.Services.GetDocumentationProviderEx();
+            var parameters = apiDescription.ParameterDescriptions.SelectMany(pd => Flatten(apiDescription, pd, documentationProvider)).ToList();
+
             href = href.Replace("{action}", actionName.ToLowerInvariant())
                        .Replace("{controller}", controllerName.ToLowerInvariant())
                        .Replace("{*", "{");
 
-            var documentationProvider = config.Services.GetDocumentationProviderEx();
+            href = RemoveOptionalRouteParameters(href, parameters);
 
             var simpleApi = new SimpleApiDescription
                 {
@@ -37,12 +40,19 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                     Name = actionName,
                     Method = apiDescription.HttpMethod.Method,
                     Documentation = apiDescription.Documentation,
-                    Parameters = apiDescription.ParameterDescriptions.SelectMany(pd => Flatten(apiDescription, pd, documentationProvider)).ToList()
+                    Parameters = parameters
                 };
 
             AddAuthenticationInfo(simpleApi, apiDescription);
 
             return simpleApi;
+        }
+
+        private static string RemoveOptionalRouteParameters(string href, IEnumerable<SimpleApiParameterDescriptor> parameters)
+        {
+            var paramNames = new HashSet<string>(parameters.Select(p => p.Name));
+            return Regex.Replace(href, "{(?<name>[^}]+)}",
+                m => (paramNames.Contains(m.Groups["name"].Value)) ? m.Value : "");
         }
 
         private static void AddAuthenticationInfo(SimpleApiDescription simpleApi, ApiDescription apiDescription)
