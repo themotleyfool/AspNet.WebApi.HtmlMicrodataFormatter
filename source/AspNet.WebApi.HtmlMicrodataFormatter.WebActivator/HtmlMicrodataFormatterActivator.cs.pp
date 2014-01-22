@@ -65,13 +65,12 @@ namespace $rootnamespace$.App_Start
 
         private static void MapDocumentationRoutes(HttpRouteCollection routes)
         {
-            routes.MapHttpRoute(global::AspNet.WebApi.HtmlMicrodataFormatter.RouteNames.ApiDocumentation,
+            var route = routes.MapHttpRoute(global::AspNet.WebApi.HtmlMicrodataFormatter.RouteNames.ApiDocumentation,
                                 "api",
                                 new {controller = "Documentation", action = "GetApiDocumentation"});
 
-            routes.MapHttpRoute(global::AspNet.WebApi.HtmlMicrodataFormatter.RouteNames.TypeDocumentation,
-                                "api/doc/{typeName}",
-                                new {controller = "Documentation", action = "GetTypeDocumentation"});
+			// optional: remove this line to include Documentation api:
+			route.HideFromDocumentationExplorer();
         }
     }
 }
