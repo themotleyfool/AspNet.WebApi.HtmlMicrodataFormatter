@@ -30,7 +30,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public SimpleApiDescription(HttpRequestMessage request, string name, string appRelativePath)
         {
-            this.Href = request.GetConfiguration().MapPath(appRelativePath);
+            this.Href = request.GetConfiguration().ToAbsolute(appRelativePath);
             this.Name = name;
             this.Method = "GET";
             this.Parameters = Enumerable.Empty<SimpleApiParameterDescriptor>();

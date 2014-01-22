@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
@@ -20,7 +21,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public static SimpleApiDescription Simplify(this ApiDescription apiDescription, HttpConfiguration config)
         {
-            var href = config.MapPath(apiDescription.Route.RouteTemplate);
+            var href = config.ToAbsolute(apiDescription.Route.RouteTemplate);
             
             var controllerName = apiDescription.ActionDescriptor.ControllerDescriptor.ControllerName;
             var actionName = apiDescription.ActionDescriptor.ActionName;
