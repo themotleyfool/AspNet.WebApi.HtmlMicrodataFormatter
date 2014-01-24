@@ -95,8 +95,6 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
             foreach (var p in api.Parameters)
             {
-                var type = GetHtmlInputType(p);
-
                 var name = context.FormatPropertyName(p.Name);
 
                 if (!string.IsNullOrEmpty(p.Documentation))
@@ -117,13 +115,12 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                         dataAttrs.Add(new XAttribute("data-allow-multiple", "true"));
                     }
 
+                    var input = BuildInput(name, p);
+                    input.Add(dataAttrs);
+
                     yield return new XElement("label",
                         new XText(name),
-                        new XElement("input",
-                            new XAttribute("name", name),
-                            new XAttribute("type", type),
-                            new XAttribute("value", p.DefaultValue ?? ""),
-                            dataAttrs));
+                        input);
                 }
                 else
                 {
@@ -137,6 +134,57 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             yield return new XElement("input", new XAttribute("type", "submit"));
         }
 
+        public virtual XElement BuildInput(string name, SimpleApiParameterDescriptor p)
+        {
+            if (p.ParameterType.IsEnum)
+            {
+                return BuildSelect(name, p);
+            }
+
+            var input = new XElement("input",
+                new XAttribute("name", name),
+                new XAttribute("type", GetHtmlInputType(p)));
+
+            if (p.ParameterType == typeof(bool))
+            {
+                input.Add(new XAttribute("value", "true"));
+                var check = Convert.ToBoolean(p.DefaultValue);
+
+                if (check)
+                {
+                    input.Add(new XAttribute("checked", "checked"));
+                }
+            }
+            else
+            {
+                input.Add(new XAttribute("value", p.DefaultValue ?? ""));
+            }
+            
+            return input;
+        }
+
+        public virtual XElement BuildSelect(string name, SimpleApiParameterDescriptor p)
+        {
+            var input = new XElement("select", new XAttribute("name", name));
+
+            if (p.IsMany)
+            {
+                input.Add(new XElement("multiple", "true"));
+            }
+
+            foreach (var value in Enum.GetValues(p.ParameterType).Cast<Enum>())
+            {
+                var option = new XElement("option", new XAttribute("value", value), new XText(value.ToString()));
+                if (value.Equals(p.DefaultValue))
+                {
+                    option.Add(new XAttribute("selected", "selected"));
+                }
+                input.Add(option);
+            }
+
+            return input;
+        }
+
         /// <summary>
         /// Determine which type attribute value to use for a <see cref="SimpleApiParameterDescriptor"/>.
         /// Currently this method only returns <c>"text"</c> though support for
@@ -145,6 +193,11 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         /// </summary>
         public virtual string GetHtmlInputType(SimpleApiParameterDescriptor apiParam)
         {
+            var type = Nullable.GetUnderlyingType(apiParam.ParameterType) ?? apiParam.ParameterType;
+            if (type == typeof (bool))
+            {
+                return "checkbox";
+            }
             return "text";
         }
     }

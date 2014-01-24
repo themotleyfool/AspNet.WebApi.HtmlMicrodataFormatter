@@ -86,7 +86,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             {
                 return new[]
                 {
-                    new SimpleApiParameterDescriptor(parameterDescription.Name, apiDescription.RelativePath, parameterDescription.Source, parameterDescription.Documentation)
+                    new SimpleApiParameterDescriptor(parameterDescription.Name, typeof(string), apiDescription.RelativePath, parameterDescription.Source, parameterDescription.Documentation)
                 };
             }
 
@@ -104,7 +104,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
                 return new[]
                 {
-                    new SimpleApiParameterDescriptor(descriptor.ParameterName, callingConvention, descriptor.DefaultValue, descriptor.IsOptional, isMany, parameterDescription.Documentation)
+                    new SimpleApiParameterDescriptor(descriptor.ParameterName, parameterType, callingConvention, descriptor.DefaultValue, descriptor.IsOptional, isMany, parameterDescription.Documentation)
                 };
             }
 
@@ -137,13 +137,13 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 
                 if (IsSimpleType(parameterType))
                 {
-                    list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, callingConvention, null, false, isMany, documentationProvider.GetDocumentation(p)));
+                    list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, parameterType, callingConvention, null, false, isMany, documentationProvider.GetDocumentation(p)));
                 }
                 else
                 {
                     if (visitedTypes.Contains(p.PropertyType))
                     {
-                        list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, callingConvention, null, false, isMany, documentationProvider.GetDocumentation(p)));
+                        list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, parameterType, callingConvention, null, false, isMany, documentationProvider.GetDocumentation(p)));
                     }
                     else
                     {

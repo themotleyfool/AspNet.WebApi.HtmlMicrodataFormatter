@@ -8,15 +8,17 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
     public class SimpleApiParameterDescriptor
     {
         public string Name { get; private set; }
+        public Type ParameterType { get; private set; }
         public string CallingConvention { get; private set; }
         public string Documentation { get; private set; }
         public object DefaultValue { get; private set; }
         public bool IsOptional { get; private set; }
         public bool IsMany { get; private set; }
 
-        public SimpleApiParameterDescriptor(string name, string callingConvention, object defaultValue, bool isOptional, bool isMany = false, string documentation = "")
+        public SimpleApiParameterDescriptor(string name, Type type, string callingConvention, object defaultValue, bool isOptional, bool isMany = false, string documentation = "")
         {
             Name = name;
+            ParameterType = type;
             CallingConvention = callingConvention;
             DefaultValue = defaultValue;
             IsOptional = isOptional;
@@ -24,8 +26,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             Documentation = documentation;
         }
 
-        public SimpleApiParameterDescriptor(string name, string routePath, ApiParameterSource callingConvention, string documentation)
-            : this(name, GetCallingConvention(name, routePath, callingConvention), null, false, false, documentation)
+        public SimpleApiParameterDescriptor(string name, Type type, string routePath, ApiParameterSource callingConvention, string documentation)
+            : this(name, type, GetCallingConvention(name, routePath, callingConvention), null, false, false, documentation)
         {
         }
 
@@ -46,6 +48,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
             this.IsOptional = arg.IsOptional;
             this.IsMany = isMany;
             this.Documentation = documentation;
+            this.ParameterType = arg.ParameterType;
 
             if (this.IsOptional)
             {
