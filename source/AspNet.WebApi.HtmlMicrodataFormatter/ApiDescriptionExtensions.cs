@@ -135,7 +135,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 bool isMany;
                 var parameterType = Unwrap(p.PropertyType, out isMany);
                 
-                if (IsSimpleType(parameterType))
+                if (IsSimpleType(parameterType) || UsesCustomModelBinder(p.PropertyType))
                 {
                     list.Add(new SimpleApiParameterDescriptor(prefix + p.Name, parameterType, callingConvention, null, false, isMany, documentationProvider.GetDocumentation(p)));
                 }
@@ -160,6 +160,12 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
             return descriptor.GetCustomAttributes<ModelBinderAttribute>()
                 .Union(descriptor.ParameterType.GetCustomAttributes(typeof (ModelBinderAttribute), true))
+                .Any(attr => attr.GetType() != typeof(FromUriAttribute) && attr.GetType() != typeof(FromBodyAttribute));
+        }
+
+        private static bool UsesCustomModelBinder(Type type)
+        {
+            return type.GetCustomAttributes(typeof(ModelBinderAttribute), true)
                 .Any(attr => attr.GetType() != typeof(FromUriAttribute) && attr.GetType() != typeof(FromBodyAttribute));
         }
 
