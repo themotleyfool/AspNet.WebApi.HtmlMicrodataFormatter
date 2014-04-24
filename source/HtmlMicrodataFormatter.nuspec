@@ -20,7 +20,7 @@
       See https://github.com/themotleyfool/AspNet.WebApi.HtmlMicrodataFormatter/releases
     </releaseNotes>
     <dependencies>
-      <dependency id="Microsoft.AspNet.WebApi.WebHost.Core" version="[5.0.0, 6.0)" />
+      <dependency id="Microsoft.AspNet.WebApi.Core" version="[5.0.0, 6.0)" />
     </dependencies>
   </metadata>
   <files>
