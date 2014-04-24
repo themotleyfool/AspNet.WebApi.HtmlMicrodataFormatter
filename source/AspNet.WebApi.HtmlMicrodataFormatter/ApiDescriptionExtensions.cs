@@ -14,11 +14,6 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 {
     public static class ApiDescriptionExtensions
     {
-        public static SimpleApiDescription Simplify(this ApiDescription apiDescription)
-        {
-            return apiDescription.Simplify(GlobalConfiguration.Configuration);
-        }
-
         public static SimpleApiDescription Simplify(this ApiDescription apiDescription, HttpConfiguration config)
         {
             var href = config.ToAbsolute(apiDescription.Route.RouteTemplate);
