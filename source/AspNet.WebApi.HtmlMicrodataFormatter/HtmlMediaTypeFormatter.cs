@@ -160,11 +160,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
                 // le sigh
                 buffer.Replace("<!DOCTYPE html >", "<!DOCTYPE html>");
 
-                using (var writer = new StreamWriter(writeStream, new UTF8Encoding(encoderShouldEmitUTF8Identifier:false)))
-                {
-                    await writer.WriteAsync(buffer.ToString());
-                    await writer.FlushAsync();
-                }
+                var bytes = Encoding.UTF8.GetBytes(buffer.ToString());
+                await writeStream.WriteAsync(bytes, 0, bytes.Length);
             }
 
             public override bool CanReadType(Type type)
