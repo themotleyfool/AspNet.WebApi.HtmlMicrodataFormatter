@@ -2,13 +2,13 @@
 /Release/
 /source/packages/
 App_Data/
+bin/
+obj/
+TestResult.xml
+NuGet.exe
 _NCrunch*
 *.ncrunch*
 *.user
 *.suo
 *.sln.ide/
-bin/
-obj/
 _ReSharper.*
-
-TestResult.xml
