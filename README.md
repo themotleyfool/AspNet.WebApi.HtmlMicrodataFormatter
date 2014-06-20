@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/t41dfuti5xtlwlqv)](https://ci.appveyor.com/project/chriseldredge/aspnet-webapi-htmlmicrodataformatter)
+
 This library enhances your Asp.net WebApi project by adding a MediaTypeFormatter
 that formats arbitrary objects as well-formed html5 documents with embedded
 microdata attributes for entities, properties and values.
