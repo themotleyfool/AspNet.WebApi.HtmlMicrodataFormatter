@@ -20,7 +20,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public void Load()
         {
-            var binPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
+            var binPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath ?? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             var xmlFiles = Directory.GetFiles(binPath, "*.xml", SearchOption.TopDirectoryOnly);
 
