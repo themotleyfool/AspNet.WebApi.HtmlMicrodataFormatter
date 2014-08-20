@@ -20,11 +20,33 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
 
         public void Load()
         {
-            var binPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath ?? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dllFiles = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(asm => new Uri(asm.CodeBase, UriKind.Absolute).LocalPath)
+                .ToList();
 
-            var xmlFiles = Directory.GetFiles(binPath, "*.xml", SearchOption.TopDirectoryOnly);
+            var xmlFiles = dllFiles
+                .Select(ProbeAssemblyXml)
+                .Where(i => i != null)
+                .ToList();
 
             Load(xmlFiles);
+        }
+
+        private static string ProbeAssemblyXml(string assemblyPath)
+        {
+            var basePath = Path.Combine(Path.GetDirectoryName(assemblyPath), Path.GetFileNameWithoutExtension(assemblyPath));
+
+            if (File.Exists(basePath + ".xml"))
+            {
+                return basePath + ".xml";
+            }
+
+            if (File.Exists(basePath + ".XML"))
+            {
+                return basePath + ".XML";
+            }
+
+            return null;
         }
 
         public void Load(IEnumerable<string> xmlFiles)
