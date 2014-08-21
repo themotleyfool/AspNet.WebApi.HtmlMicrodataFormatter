@@ -21,6 +21,7 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         public void Load()
         {
             var dllFiles = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(asm => !asm.IsDynamic)
                 .Select(asm => new Uri(asm.CodeBase, UriKind.Absolute).LocalPath)
                 .ToList();
 
