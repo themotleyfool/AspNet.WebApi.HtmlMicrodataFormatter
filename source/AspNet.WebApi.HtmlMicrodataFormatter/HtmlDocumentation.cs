@@ -22,7 +22,8 @@ namespace AspNet.WebApi.HtmlMicrodataFormatter
         {
             var dllFiles = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(asm => !asm.IsDynamic)
-                .Select(asm => new Uri(asm.CodeBase, UriKind.Absolute).LocalPath)
+                .Select(asm => asm.Location)
+                .Where(path => !string.IsNullOrWhiteSpace(path))
                 .ToList();
 
             var xmlFiles = dllFiles
